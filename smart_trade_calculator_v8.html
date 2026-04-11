@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Trade Calculator v8</title>
+
+<style>
+body{font-family:Segoe UI;background:#05050f;color:#fff;padding:20px;max-width:900px;margin:auto}
+h2{color:#00f5a0}
+input,button{
+  width:100%;padding:10px;margin:5px 0;
+  background:#0f0f1f;border:1px solid #222;color:#fff;border-radius:8px
+}
+.card{background:#0f0f1f;padding:12px;border-radius:10px;margin-top:10px;border:1px solid #222}
+.green{color:#00f5a0}.red{color:#ff4d6d}.amber{color:#ffd060}
+table{width:100%;margin-top:10px;border-collapse:collapse}
+td,th{border:1px solid #222;padding:6px;text-align:center;font-size:12px}
+</style>
+</head>
+
+<body>
+
+<h2>🚀 Smart Trade Calculator v8 (Pro)</h2>
+
+<label>Stock</label>
+<input id="symbol" placeholder="RELIANCE">
+
+<label>Capital</label>
+<input id="cap" placeholder="500000">
+
+<label>CMP</label>
+<input id="cmp" placeholder="Manual / Auto">
+
+<label>ATR (optional)</label>
+<input id="atr" placeholder="e.g. 20">
+
+<label>Risk %</label>
+<input id="risk" value="2">
+
+<label>Reward %</label>
+<input id="reward" value="5">
+
+<button onclick="go()">Calculate</button>
+<button onclick="saveTrade()">Save Trade</button>
+
+<div id="out"></div>
+
+<h3>📊 Analytics</h3>
+<div id="stats"></div>
+
+<h3>📅 Trade Journal</h3>
+<div id="journal"></div>
+
+<script>
+
+function num(v){return parseFloat(v)||0;}
+
+function go(){
+  const cap=num(capEl.value);
+  const cmp=num(cmpEl.value);
+  const risk=num(riskEl.value);
+  const reward=num(rewardEl.value);
+  const atr=num(atrEl.value);
+
+  if(cap<=0||cmp<=0){out.innerHTML='';return;}
+
+  let sl;
+
+  // ATR based SL
+  if(atr>0){
+    sl = cmp - (atr*2);
+  }else{
+    sl = cmp*(1-risk/100);
+  }
+
+  const target=cmp*(1+reward/100);
+  const slDist=cmp-sl;
+
+  const maxLoss=cap*risk/100;
+  const qty=Math.min(Math.floor(maxLoss/slDist), Math.floor(cap/cmp));
+
+  if(qty<=0){
+    out.innerHTML='<div class="card amber">Capital too small</div>';return;
+  }
+
+  const loss=qty*slDist;
+  const profit=qty*(target-cmp);
+  const rr=(profit/loss).toFixed(2);
+
+  let decision='AVOID',color='red';
+  if(rr>=2) {decision='STRONG BUY';color='green'}
+  else if(rr>=1.5){decision='BUY';color='amber'}
+
+  out.innerHTML=`
+    <div class="card ${color}">
+      <b>${decision}</b> | R:R 1:${rr}
+    </div>
+    <div class="card">SL: ₹${sl.toFixed(2)} | Target: ₹${target.toFixed(2)}</div>
+    <div class="card">Qty: ${qty}</div>
+    <div class="card red">Loss: ₹${Math.round(loss)}</div>
+    <div class="card green">Profit: ₹${Math.round(profit)}</div>
+  `;
+
+  window.lastTrade={
+    symbol:symbolEl.value,
+    entry:cmp,
+    sl,target,
+    result:null
+  };
+}
+
+/* SAVE TRADE */
+function saveTrade(){
+  if(!window.lastTrade)return;
+
+  let trades=JSON.parse(localStorage.getItem('trades')||'[]');
+  trades.push({...lastTrade,date:new Date().toLocaleDateString()});
+  localStorage.setItem('trades',JSON.stringify(trades));
+
+  loadTrades();
+}
+
+/* LOAD */
+function loadTrades(){
+  const trades=JSON.parse(localStorage.getItem('trades')||'[]');
+
+  let html='<table><tr><th>Date</th><th>Stock</th><th>Entry</th><th>SL</th><th>Target</th></tr>';
+
+  trades.forEach(t=>{
+    html+=`<tr>
+      <td>${t.date}</td>
+      <td>${t.symbol}</td>
+      <td>${t.entry}</td>
+      <td>${t.sl.toFixed(2)}</td>
+      <td>${t.target.toFixed(2)}</td>
+    </tr>`;
+  });
+
+  html+='</table>';
+  journal.innerHTML=html;
+
+  calcStats(trades);
+}
+
+/* ANALYTICS */
+function calcStats(trades){
+  const total=trades.length;
+
+  stats.innerHTML=`
+    <div class="card">
+      Total Trades: ${total}
+    </div>
+  `;
+}
+
+/* DOM */
+const capEl=document.getElementById('cap');
+const cmpEl=document.getElementById('cmp');
+const riskEl=document.getElementById('risk');
+const rewardEl=document.getElementById('reward');
+const atrEl=document.getElementById('atr');
+const symbolEl=document.getElementById('symbol');
+const out=document.getElementById('out');
+const journal=document.getElementById('journal');
+const stats=document.getElementById('stats');
+
+loadTrades();
+
+</script>
+
+</body>
+</html>
