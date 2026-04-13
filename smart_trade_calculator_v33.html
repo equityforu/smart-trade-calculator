@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#05050f">
+<meta name="description" content="Smart Trade Calculator by Equity &amp; Profit — calculate stop loss, target price, shares to buy and net profit/loss for any NSE/BSE stock. Free positional trading tool.">
+<meta name="keywords" content="trade calculator, stop loss calculator, NSE BSE, position sizing, risk reward, equity profit, stock market India">
+<meta property="og:title" content="Smart Trade Calculator v33 · Equity &amp; Profit">
+<meta property="og:description" content="Calculate stop loss, target, shares to buy and net profit/loss for any NSE/BSE stock. Free tool by @equityforu.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Smart Trade Calculator v33 · Equity &amp; Profit">
+<meta name="robots" content="index, follow">
+<title>Smart Trade Calculator v33 · Equity &amp; Profit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══ RESET & VARS ══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#05050f; --bg2:#0d0d20; --bg3:#141430; --bg4:#1b1b3a;
+  --b1:rgba(255,255,255,0.06); --b2:rgba(255,255,255,0.12); --b3:rgba(255,255,255,0.20);
+  --green:#00f5a0; --g2:#00d97e; --g3:#00b862;
+  --gdim:rgba(0,245,160,0.08); --gbord:rgba(0,245,160,0.22);
+  --red:#ff4d6d;   --rdim:rgba(255,77,109,0.09); --rbord:rgba(255,77,109,0.24);
+  --amber:#ffd060; --adim:rgba(255,208,96,0.08); --abord:rgba(255,208,96,0.24);
+  --cyan:#00e5ff;  --cdim:rgba(0,229,255,0.07);  --cbord:rgba(0,229,255,0.20);
+  --sky:#7ec8ff;   --violet:#bf7fff;
+  --text:#f0f0ff;  --t2:#d0d0ea; --t3:#b0b0d0; --faint:#8888b0;
+  --r:13px; --rsm:8px; --rxs:5px;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Outfit',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-size-adjust:100%;-webkit-text-size-adjust:100%;}
+.page{max-width:640px;margin:0 auto;padding:0 16px 48px;}
+
+/* ══ HEADER ══ */
+.header{text-align:center;padding:32px 16px 22px;border-bottom:1px solid var(--b1);}
+.htag{display:inline-flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}
+h1{font-size:clamp(26px,6vw,44px);font-weight:700;letter-spacing:-0.03em;line-height:1.15;}
+h1 em{font-style:normal;color:var(--green);}
+.hsub{margin:10px auto 0;font-size:13px;color:var(--text);font-weight:300;max-width:460px;line-height:1.65;}
+
+/* ══ CAUTION ══ */
+.caution{margin:12px 0 0;background:rgba(255,77,109,0.06);border:1px solid rgba(255,77,109,0.20);border-radius:var(--rsm);padding:10px 13px;display:flex;flex-direction:column;gap:6px;}
+.ctop{display:flex;align-items:center;gap:8px;}
+.chead{font-size:13px;font-weight:600;color:var(--amber);}
+.cpills{display:flex;flex-wrap:wrap;gap:5px;}
+.cp{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;border-radius:14px;font-weight:500;}
+.cp.g{background:rgba(0,245,160,0.09);color:var(--green);border:1px solid rgba(0,245,160,0.22);}
+.cp.c{background:rgba(0,229,255,0.08);color:var(--cyan);border:1px solid rgba(0,229,255,0.20);}
+.cp.a{background:rgba(255,208,96,0.08);color:var(--amber);border:1px solid rgba(255,208,96,0.22);}
+
+/* ══ SECTIONS ══ */
+.sec{margin-top:18px;}
+.divider{height:1px;background:var(--b1);margin:18px 0 0;}
+.step-hd{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.step-n{width:32px;height:32px;border-radius:50%;background:var(--amber);color:#05050f;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:14px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.step-title{font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--text);}
+.step-sub{font-size:12px;color:var(--text);font-weight:400;margin-top:3px;display:block;line-height:1.5;}
+.sec-hd{font-size:17px;font-weight:600;letter-spacing:-0.01em;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--b2);}
+.sec-hd span{color:var(--green);}
+
+/* ══ STEP LOCK SYSTEM ══ */
+.step-locked{opacity:0.32;pointer-events:none;user-select:none;}
+.step-locked .icard{filter:grayscale(0.3);}
+.step-active .icard{box-shadow:0 0 0 1.5px var(--amber);}
+.step-done .step-n{background:var(--green) !important;color:#05050f !important;}
+.step-active .step-n{background:var(--amber);color:#05050f;box-shadow:0 0 0 3px rgba(255,208,96,0.20);}
+.step-pending .step-n{background:var(--bg4);color:var(--faint);border:1px solid var(--b2);}
+/* next-step nudge arrow shown below active step */
+.step-nudge{display:none;margin-top:10px;padding:8px 14px;background:rgba(255,208,96,0.07);border:1px solid rgba(255,208,96,0.22);border-radius:var(--rsm);font-size:11px;color:var(--amber);font-family:'DM Mono',monospace;text-align:center;}
+.step-nudge.show{display:block;}
+
+/* ══ INPUT CARD ══ */
+.icard{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;}
+.irow{display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--b1);}
+.irow:last-of-type{border-bottom:none;}
+.iico{font-family:'DM Mono',monospace;font-size:12px;color:var(--cyan);min-width:20px;}
+.ilbl{font-size:13px;color:var(--sky);padding:14px 10px 14px 0;flex:1;line-height:1.3;}
+.ilbl small{display:block;font-size:10px;color:var(--text);margin-top:2px;}
+.ifield{background:transparent;border:none;outline:none;color:var(--amber);font-family:'DM Mono',ui-monospace,'Courier New',monospace;font-size:17px;font-weight:500;text-align:right;width:110px;padding:14px 0;-webkit-appearance:none;appearance:none;}
+.ifield::-webkit-inner-spin-button,.ifield::-webkit-outer-spin-button{-webkit-appearance:none;}
+.ifield::placeholder{color:var(--faint);font-size:13px;font-weight:400;}
+/* iOS input zoom prevention — font-size >= 16px on focus */
+@media screen and (max-width:768px){
+  .ifield{font-size:16px;}
+}
+.isuf{font-family:'DM Mono',monospace;font-size:13px;color:rgba(255,208,96,0.50);padding-left:3px;}
+.ihint{padding:8px 16px;background:var(--bg3);font-size:10px;color:var(--text);border-top:1px solid var(--b1);font-family:'DM Mono',monospace;line-height:1.65;}
+.ihint strong{color:var(--amber);}
+/* input group divider label */
+.igroup-lbl{padding:5px 16px;background:var(--bg4);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;border-bottom:1px solid var(--b1);}
+.igroup-lbl.sl-grp{color:rgba(255,77,109,0.70);}
+.igroup-lbl.rw-grp{color:rgba(0,245,160,0.85);}
+
+/* ══ RESULT CARDS ══ */
+.results{display:flex;flex-direction:column;gap:8px;}
+.res-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.res-trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+@media(max-width:420px){
+  .res-trio{grid-template-columns:1fr 1fr;}
+  .rr-card{grid-column:1/-1;}
+}
+.rc{border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:3px;}
+.rc.sl  {background:var(--rdim);border:1.5px solid var(--rbord);}
+.rc.tgt {background:var(--gdim);border:1.5px solid var(--gbord);}
+.rc.qty {background:var(--cdim);border:1.5px solid var(--cbord);}
+.rc.loss{background:var(--rdim);border:1.5px solid var(--rbord);}
+.rc.prof{background:var(--gdim);border:1.5px solid var(--gbord);}
+.rc.rr  {background:var(--bg2); border:1.5px solid var(--b2);}
+.rc.cost{background:var(--adim);border:1.5px solid var(--abord);}
+.rc-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;}
+.sl   .rc-lbl,.loss .rc-lbl{color:rgba(255,77,109,0.65);}
+.tgt  .rc-lbl,.prof .rc-lbl{color:rgba(0,245,160,0.90);}
+.qty  .rc-lbl{color:rgba(0,229,255,0.90);}
+.rr   .rc-lbl{color:var(--text);}
+.cost .rc-lbl{color:rgba(255,208,96,0.90);}
+.rc-val{font-family:'DM Mono',monospace;font-size:clamp(19px,4vw,26px);font-weight:500;line-height:1.1;}
+.sl   .rc-val,.loss .rc-val{color:var(--red);}
+.tgt  .rc-val,.prof .rc-val{color:var(--green);}
+.qty  .rc-val{color:var(--cyan);}
+.rr   .rc-val{color:var(--sky);}
+.cost .rc-val{color:var(--amber);}
+.rc-sub{font-size:11px;margin-top:3px;}
+.sl   .rc-sub,.loss .rc-sub{color:rgba(255,77,109,0.85);}
+.tgt  .rc-sub,.prof .rc-sub{color:rgba(0,245,160,0.80);}
+.qty  .rc-sub{color:rgba(0,229,255,0.85);}
+.rr   .rc-sub{color:var(--text);}
+.cost .rc-sub{color:rgba(255,208,96,0.85);}
+.res-placeholder{padding:24px;text-align:center;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);}
+.res-placeholder p{font-size:13px;color:var(--sky);font-family:'DM Mono',monospace;}
+/* allocation warning */
+.alloc-warn{border-radius:var(--rsm);padding:9px 13px;margin-top:8px;font-size:12px;line-height:1.55;display:flex;gap:8px;align-items:flex-start;}
+.alloc-warn.amber{background:var(--adim);border:1px solid var(--abord);}
+.alloc-warn.red  {background:var(--rdim);border:1px solid var(--rbord);}
+.alloc-warn.amber .aw-icon{color:var(--amber);}
+.alloc-warn.red   .aw-icon{color:var(--red);}
+.alloc-warn.amber .aw-text{color:var(--text);}
+.alloc-warn.red   .aw-text{color:var(--text);}
+.aw-icon{font-size:14px;flex-shrink:0;}
+
+
+/* ══ TRADE TYPE TOGGLE ══ */
+.toggle-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--b1);gap:12px;}
+.toggle-lbl{font-size:13px;color:var(--sky);flex:1;line-height:1.3;}
+.toggle-lbl small{display:block;font-size:10px;color:var(--text);margin-top:2px;}
+.toggle-wrap{display:flex;background:var(--bg);border:1px solid var(--b2);border-radius:20px;padding:3px;gap:2px;flex-shrink:0;}
+.tgl-btn{font-family:'DM Mono',ui-monospace,'Courier New',monospace;font-size:10px;font-weight:500;letter-spacing:0.04em;padding:5px 11px;border-radius:16px;border:1px solid transparent;cursor:pointer;transition:background 0.15s,color 0.15s,border-color 0.15s;-webkit-tap-highlight-color:transparent;background:transparent;color:var(--faint);}
+.tgl-btn.active{font-weight:600;}
+.tgl-btn.delivery.active{background:var(--gdim);color:var(--green);border-color:var(--gbord);}
+.tgl-btn.intraday.active{background:var(--adim);color:var(--amber);border-color:var(--abord);}
+/* ══ STOCK SEARCH ══ */
+.stock-search-wrap{position:relative;border-bottom:1px solid var(--b1);}
+.stock-row{display:flex;align-items:center;padding:0 16px;gap:0;}
+.stock-ico{font-family:'DM Mono',ui-monospace,monospace;font-size:12px;color:var(--cyan);min-width:20px;}
+.stock-input-wrap{flex:1;display:flex;flex-direction:column;padding:10px 10px 10px 0;}
+.stock-lbl{font-size:13px;color:var(--sky);}
+.stock-lbl small{display:block;font-size:10px;color:var(--text);margin-top:1px;}
+.stock-input{background:transparent;border:none;outline:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;width:100%;padding:4px 0 0;-webkit-appearance:none;}
+.stock-input::placeholder{color:var(--faint);font-size:13px;}
+/* price badge */
+.stock-price-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;min-width:90px;}
+.stock-price{font-family:'DM Mono',ui-monospace,monospace;font-size:17px;font-weight:500;}
+.stock-price.live{color:var(--green);}
+.stock-price.closed{color:var(--faint);}
+.stock-price.loading{color:var(--amber);animation:blink 1s infinite;}
+.stock-price.error{color:var(--red);font-size:12px;}
+.stock-status{font-family:'DM Mono',ui-monospace,monospace;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;letter-spacing:0.05em;}
+.stock-status.live{background:rgba(0,245,160,0.12);color:var(--green);border:1px solid rgba(0,245,160,0.28);}
+.stock-status.closed{background:rgba(136,136,176,0.12);color:var(--faint);border:1px solid rgba(136,136,176,0.22);}
+.stock-status.loading{background:var(--adim);color:var(--amber);border:1px solid var(--abord);}
+.stock-change{font-family:'DM Mono',ui-monospace,monospace;font-size:10px;}
+.stock-change.up{color:var(--green);}
+.stock-change.down{color:var(--red);}
+.stock-change.flat{color:var(--faint);}
+/* autocomplete dropdown */
+.ac-drop{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--b3);border-top:none;border-radius:0 0 var(--r) var(--r);z-index:100;max-height:220px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);}
+.ac-drop.open{display:block;}
+.ac-item{padding:10px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--b1);-webkit-tap-highlight-color:transparent;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item:active{background:var(--bg4);}
+.ac-sym{font-family:'DM Mono',ui-monospace,monospace;font-size:12px;font-weight:500;color:var(--cyan);}
+.ac-name{font-size:11px;color:var(--text);text-align:right;margin-left:8px;}
+/* info strip below search */
+.stock-info-strip{padding:6px 16px;background:var(--bg3);border-bottom:1px solid var(--b1);display:none;flex-wrap:wrap;gap:4px 16px;align-items:center;}
+.stock-info-strip.visible{display:flex;}
+.si-name{font-size:12px;color:var(--text);font-weight:500;}
+.si-exch{font-family:'DM Mono',ui-monospace,monospace;font-size:9px;color:var(--faint);letter-spacing:0.08em;}
+.si-prev{font-size:10px;color:var(--text);margin-left:auto;}
+/* unlisted panel */
+.unlisted-panel{display:none;padding:7px 16px 8px;background:rgba(255,208,96,0.06);border-bottom:1px solid rgba(255,208,96,0.20);font-size:10px;font-family:'DM Mono',monospace;}
+.unlisted-panel.visible{display:block;}
+.unlisted-label{color:rgba(255,208,96,0.80);line-height:1.55;}
+/* offline tip */
+.offline-tip{display:none;padding:7px 16px;background:rgba(136,136,176,0.06);border-bottom:1px solid var(--b1);font-size:10px;color:var(--text);font-family:'DM Mono',ui-monospace,monospace;line-height:1.55;}
+.offline-tip strong{color:var(--amber);}
+/* copy trade summary button */
+.copy-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:8px;padding:11px 16px;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);color:var(--text);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:0.05em;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s,border-color 0.15s,color 0.15s;}
+.copy-btn:hover{background:var(--bg4);border-color:var(--b3);color:var(--cyan);}
+.copy-btn.copied{background:rgba(0,245,160,0.09);border-color:var(--gbord);color:var(--green);}
+/* saved indicator */
+.saved-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);margin-left:6px;opacity:0;transition:opacity 0.3s;}
+.saved-dot.show{opacity:1;}
+/* toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg3);border:1px solid var(--gbord);color:var(--green);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding:10px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity 0.2s,transform 0.2s;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* retry button */
+.retry-btn{display:inline-block;margin-left:8px;padding:2px 8px;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.25);border-radius:5px;color:var(--cyan);font-size:9px;font-family:'DM Mono',monospace;cursor:pointer;letter-spacing:0.05em;}
+.retry-btn:hover{background:rgba(0,229,255,0.18);}
+
+/* ══ DATA SOURCE BADGE ══ */
+.data-badge{display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:3px 9px;border-radius:12px;letter-spacing:0.05em;}
+.data-badge.live   {background:rgba(0,245,160,0.12);color:var(--green);border:1px solid rgba(0,245,160,0.28);}
+.data-badge.cached {background:rgba(0,229,255,0.10);color:var(--cyan);border:1px solid rgba(0,229,255,0.22);}
+.data-badge.manual {background:rgba(255,208,96,0.10);color:var(--amber);border:1px solid rgba(255,208,96,0.28);}
+.data-badge.error  {background:rgba(255,77,109,0.10);color:var(--red);border:1px solid rgba(255,77,109,0.25);}
+.data-source-row{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:var(--bg3);border-bottom:1px solid var(--b1);}
+.data-ts{font-family:'DM Mono',monospace;font-size:9px;color:var(--faint);}
+
+/* ══ MANUAL MODE TOGGLE (explicit) ══ */
+.mode-toggle-bar{display:flex;align-items:center;padding:9px 16px;background:rgba(255,208,96,0.04);border-bottom:1px solid var(--b1);gap:10px;}
+.mode-toggle-bar .mtlbl{font-size:12px;color:var(--text);flex:1;}
+.mode-toggle-bar .mtlbl small{display:block;font-size:10px;color:var(--text);margin-top:1px;}
+.mode-seg{display:flex;background:var(--bg);border:1px solid var(--b2);border-radius:18px;padding:2px;gap:2px;flex-shrink:0;}
+.mseg-btn{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.04em;padding:5px 13px;border-radius:14px;border:1px solid transparent;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;background:transparent;color:var(--faint);}
+.mseg-btn.active-auto{background:rgba(0,245,160,0.12);color:var(--green);border-color:rgba(0,245,160,0.28);font-weight:600;}
+.mseg-btn.active-manual{background:rgba(255,208,96,0.12);color:var(--amber);border-color:rgba(255,208,96,0.28);font-weight:600;}
+
+/* ══ CUSTOM STOCK PANEL ══ */
+.custom-stock-panel{display:none;padding:10px 16px;background:rgba(255,208,96,0.04);border-bottom:1px solid rgba(255,208,96,0.14);}
+.custom-stock-panel.visible{display:block;}
+.csp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+.csp-field-wrap{display:flex;flex-direction:column;gap:3px;}
+.csp-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);}
+.csp-field{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rxs);padding:7px 10px;color:var(--amber);font-family:'DM Mono',monospace;font-size:13px;outline:none;width:100%;}
+.csp-field:focus{border-color:var(--abord);}
+.csp-field::placeholder{color:var(--faint);font-size:11px;}
+.csp-exch-wrap{display:flex;gap:5px;margin-top:2px;}
+.csp-exch-btn{font-family:'DM Mono',monospace;font-size:9px;padding:4px 9px;border-radius:10px;border:1px solid var(--b2);background:var(--bg3);color:var(--faint);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.15s;}
+.csp-exch-btn.active{background:rgba(0,229,255,0.10);color:var(--cyan);border-color:rgba(0,229,255,0.25);}
+
+/* ══ LAST USED CUSTOM STOCKS ══ */
+.recent-custom{padding:8px 16px;background:var(--bg3);border-bottom:1px solid var(--b1);display:none;}
+.recent-custom.visible{display:block;}
+.rc-hdr{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;color:var(--faint);margin-bottom:5px;}
+.rc-pills{display:flex;flex-wrap:wrap;gap:5px;}
+.rc-pill{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;border-radius:12px;background:var(--bg4);border:1px solid var(--b2);color:var(--sky);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.12s;}
+.rc-pill:hover{background:var(--bg2);border-color:var(--cbord);color:var(--cyan);}
+
+/* ══ ENTRY TYPE SELECTOR ══ */
+.entry-type-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--b1);gap:10px;}
+.entry-type-lbl{font-size:13px;color:var(--sky);flex:1;}
+.entry-type-lbl small{display:block;font-size:10px;color:var(--text);margin-top:2px;}
+.et-wrap{display:flex;background:var(--bg);border:1px solid var(--b2);border-radius:18px;padding:2px;gap:2px;flex-shrink:0;}
+.et-btn{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:5px 9px;border-radius:13px;border:1px solid transparent;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;background:transparent;color:var(--faint);}
+.et-btn.active{background:rgba(127,200,255,0.12);color:var(--sky);border-color:rgba(127,200,255,0.28);font-weight:600;}
+/* Entry price field — shown only for Limit/Breakout/Pullback */
+.entry-price-row{display:none;padding:0 16px;border-bottom:1px solid var(--b1);align-items:center;}
+.entry-price-row.visible{display:flex;}
+
+/* ══ POSITION SIZING MODE ══ */
+.sizing-toggle-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--b1);gap:10px;}
+.sizing-lbl{font-size:13px;color:var(--sky);flex:1;}
+.sizing-lbl small{display:block;font-size:10px;color:var(--text);margin-top:2px;}
+.siz-wrap{display:flex;background:var(--bg);border:1px solid var(--b2);border-radius:18px;padding:2px;gap:2px;flex-shrink:0;}
+.siz-btn{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:5px 9px;border-radius:13px;border:1px solid transparent;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;background:transparent;color:var(--faint);}
+.siz-btn.active{background:rgba(0,229,255,0.10);color:var(--cyan);border-color:rgba(0,229,255,0.22);font-weight:600;}
+/* Fixed risk row — replaces capRisk% when mode=fixed */
+.fixed-risk-row{display:none;padding:0 16px;border-bottom:1px solid var(--b1);align-items:center;}
+.fixed-risk-row.visible{display:flex;}
+/* Max shares cap row */
+.maxshares-row{display:none;padding:0 16px;border-bottom:1px solid var(--b1);align-items:center;}
+.maxshares-row.visible{display:flex;}
+/* Max alloc override */
+.maxalloc-row{display:none;padding:0 16px;border-bottom:1px solid var(--b1);align-items:center;}
+.maxalloc-row.visible{display:flex;}
+
+/* ══ ATR / VOLATILITY PANEL ══ */
+.atr-panel{margin-top:14px;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;}
+.atr-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--b1);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;}
+.atr-title{font-size:14px;font-weight:600;color:var(--sky);}
+.atr-title small{font-size:10px;font-weight:400;color:var(--text);margin-left:8px;}
+.atr-toggle-ico{font-family:'DM Mono',monospace;font-size:11px;color:var(--faint);transition:transform 0.2s;}
+.atr-toggle-ico.open{transform:rotate(180deg);}
+.atr-body{display:none;padding:12px 16px;display:none;}
+.atr-body.open{display:block;}
+.atr-input-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.atr-field-wrap{flex:1;display:flex;flex-direction:column;gap:3px;}
+.atr-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);}
+.atr-field{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rxs);padding:8px 10px;color:var(--amber);font-family:'DM Mono',monospace;font-size:14px;outline:none;width:100%;-webkit-appearance:none;}
+.atr-field:focus{border-color:var(--abord);}
+.atr-field::placeholder{color:var(--faint);font-size:11px;}
+.atr-calc-btn{padding:8px 14px;background:rgba(0,229,255,0.09);border:1px solid rgba(0,229,255,0.22);border-radius:var(--rxs);color:var(--cyan);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:background 0.15s;}
+.atr-calc-btn:hover{background:rgba(0,229,255,0.17);}
+.atr-results{display:none;}
+.atr-results.visible{display:block;}
+.atr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;}
+@media(max-width:380px){.atr-grid{grid-template-columns:1fr 1fr;}}
+.atr-card{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);padding:10px 12px;}
+.atr-card-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.10em;text-transform:uppercase;color:var(--faint);margin-bottom:3px;}
+.atr-card-val{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;}
+.atr-card-val.green{color:var(--green);}
+.atr-card-val.amber{color:var(--amber);}
+.atr-card-val.red{color:var(--red);}
+.atr-card-val.cyan{color:var(--cyan);}
+.atr-card-sub{font-size:10px;color:var(--text);margin-top:2px;}
+.atr-suggestion{padding:10px 12px;background:rgba(0,245,160,0.06);border:1px solid rgba(0,245,160,0.18);border-radius:var(--rsm);font-size:11px;color:var(--text);line-height:1.65;}
+.atr-suggestion strong{color:var(--green);}
+.atr-suggestion .use-btn{display:inline-block;margin-left:6px;padding:2px 8px;background:rgba(0,245,160,0.12);border:1px solid rgba(0,245,160,0.28);border-radius:5px;color:var(--green);font-family:'DM Mono',monospace;font-size:9px;cursor:pointer;}
+.atr-hint{padding:7px 0 0;font-family:'DM Mono',monospace;font-size:9px;color:var(--text);line-height:1.65;}
+
+/* ══ SMART WARNINGS PANEL ══ */
+.smart-warnings{margin-top:8px;display:flex;flex-direction:column;gap:6px;}
+.sw{border-radius:var(--rsm);padding:10px 13px;display:flex;gap:9px;align-items:flex-start;}
+.sw.amber{background:var(--adim);border:1px solid var(--abord);}
+.sw.red   {background:var(--rdim);border:1px solid var(--rbord);}
+.sw.cyan  {background:var(--cdim);border:1px solid var(--cbord);}
+.sw-ico{font-size:13px;flex-shrink:0;margin-top:1px;}
+.sw-body{flex:1;}
+.sw-title{font-size:12px;font-weight:600;margin-bottom:2px;}
+.sw.amber .sw-title{color:var(--amber);}
+.sw.red   .sw-title{color:var(--red);}
+.sw.cyan  .sw-title{color:var(--cyan);}
+.sw-text{font-size:11px;color:var(--text);line-height:1.6;}
+/* ══ TRADE JOURNAL ══ */
+.journal-card{background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;margin-bottom:8px;}
+.jc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--b1);gap:8px;}
+.jc-sym{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--cyan);}
+.jc-name{font-size:12px;color:var(--text);flex:1;margin-left:8px;}
+.jc-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--faint);}
+.jc-del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:14px;padding:2px 6px;-webkit-tap-highlight-color:transparent;}
+.jc-del:hover{color:var(--red);}
+.jc-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;padding:0;}
+.jc-cell{padding:8px 14px;border-right:1px solid var(--b1);border-bottom:1px solid var(--b1);}
+.jc-cell:nth-child(3n){border-right:none;}
+.jc-cell:nth-last-child(-n+3){border-bottom:none;}
+.jc-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.10em;text-transform:uppercase;color:var(--faint);margin-bottom:2px;}
+.jc-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--text);}
+.jc-val.green{color:var(--green);}
+.jc-val.red{color:var(--red);}
+.jc-val.amber{color:var(--amber);}
+.jc-val.cyan{color:var(--cyan);}
+.jc-mode{font-size:9px;padding:2px 7px;border-radius:10px;font-family:'DM Mono',monospace;font-weight:600;}
+.jc-mode.delivery{background:var(--gdim);color:var(--green);border:1px solid var(--gbord);}
+.jc-mode.intraday{background:var(--adim);color:var(--amber);border:1px solid var(--abord);}
+.jc-load-btn{display:block;width:100%;padding:7px;background:var(--bg3);border:none;border-top:1px solid var(--b1);color:var(--sky);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;letter-spacing:0.05em;text-align:center;}
+.jc-load-btn:hover{background:var(--bg4);color:var(--cyan);}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="htag"><span class="dot"></span>NSE &amp; BSE · Indian Stock Market</div>
+  <h1>Smart <em>Trade</em> Calculator</h1>
+  <div class="hsub">Set your stop loss distance and capital risk separately — get exact shares to buy, real profit/loss after costs, and capital allocation check.</div>
+</div>
+
+<!-- CAUTION -->
+<div class="caution">
+  <div class="ctop">
+    <span style="font-size:14px;color:var(--red)">⚠</span>
+    <span class="chead">For best results — use stocks with good daily volume</span>
+  </div>
+  <div class="cpills">
+    <span class="cp g">NIFTY 50 · Highest liquidity</span>
+    <span class="cp c">NIFTY 100 · Good liquidity</span>
+    <span class="cp a">Mid-Cap 150 · Moderate liquidity</span>
+  </div>
+</div>
+
+<!-- STEP 1 -->
+<div class="sec" id="step1sec">
+  <div class="step-hd">
+    <span class="step-n">1</span>
+    <div style="flex:1">
+      <div class="step-title">Enter Your Trade Details</div>
+      <span class="step-sub">Numbers only · SL % and Capital Risk % are two separate inputs</span>
+    </div>
+    <button onclick="resetAll()" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rsm);padding:6px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;letter-spacing:0.05em;">↺ Reset</button>
+  </div>
+  <div class="icard">
+    <div class="irow">
+      <span class="iico">₹</span>
+      <span class="ilbl">Total trading capital<small>Money set aside for trading only — not savings</small></span>
+      <input class="ifield" type="text" inputmode="numeric" id="cap" placeholder="e.g. 500000"
+        onkeydown="bk(event,'i')" onpaste="bp(event,'i')" oninput="cl(this,'i');go();saveInputs()">
+    </div>
+    <div class="stock-search-wrap">
+      <!-- Manual / Auto Mode toggle bar -->
+      <div class="mode-toggle-bar">
+        <div class="mtlbl">Price mode<small>Auto = live from NSE · Manual = you enter price</small></div>
+        <div class="mode-seg">
+          <button class="mseg-btn active-auto" id="btn-mode-auto"   onclick="setPriceMode('auto')">⚡ Auto</button>
+          <button class="mseg-btn"             id="btn-mode-manual" onclick="setPriceMode('manual')">✎ Manual</button>
+        </div>
+      </div>
+      <!-- Stock search row -->
+      <div class="stock-row" id="autoSearchRow">
+        <span class="stock-ico">◎</span>
+        <div class="stock-input-wrap">
+          <span class="stock-lbl">Stock symbol or name<small>Type to search · price auto-fills below</small></span>
+          <input class="stock-input" type="text" id="stockInput" placeholder="e.g. RELIANCE, TCS, HDFCBANK"
+            autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+            oninput="onStockInput(this.value)"
+            onkeydown="onStockKey(event)"
+            onfocus="onStockFocus(this.value)"
+            onblur="setTimeout(closeAC,180)">
+        </div>
+        <div class="stock-price-wrap">
+          <span class="stock-price" id="stockPrice">—</span>
+          <span class="stock-status" id="stockStatus"></span>
+          <span class="stock-change" id="stockChange"></span>
+        </div>
+      </div>
+      <!-- Autocomplete dropdown -->
+      <div class="ac-drop" id="acDrop"></div>
+      <!-- Stock name + prev close strip -->
+      <div class="stock-info-strip" id="stockInfoStrip">
+        <span class="si-name" id="siName"></span>
+        <span class="si-exch" id="siExch"></span>
+        <span class="si-prev" id="siPrev"></span>
+      </div>
+      <!-- Data source confidence badge + last updated -->
+      <div class="data-source-row" id="dataSourceRow" style="display:none">
+        <span class="data-badge" id="dataSourceBadge"></span>
+        <span class="data-ts" id="dataLastUpdated"></span>
+      </div>
+      <!-- Offline tip -->
+      <div class="offline-tip" id="offlineTip">
+        <strong>Price not loading?</strong> Switching to Manual mode — enter CMP directly. <span class="retry-btn" onclick="retryFetch()">↺ Retry auto-fetch</span>
+      </div>
+      <!-- Custom stock panel (Manual mode) -->
+      <div class="custom-stock-panel" id="customStockPanel">
+        <div style="font-size:12px;color:var(--text);font-weight:500;margin-bottom:6px;">Custom stock details</div>
+        <div class="csp-grid">
+          <div class="csp-field-wrap">
+            <span class="csp-lbl">Stock name / ticker</span>
+            <input class="csp-field" type="text" id="customName" placeholder="e.g. MY STOCK"
+              oninput="onCustomNameInput()" autocapitalize="characters" autocorrect="off" spellcheck="false">
+          </div>
+          <div class="csp-field-wrap">
+            <span class="csp-lbl">Exchange</span>
+            <div class="csp-exch-wrap">
+              <button class="csp-exch-btn active" id="exch-NSE" onclick="setExch('NSE')">NSE</button>
+              <button class="csp-exch-btn"         id="exch-BSE" onclick="setExch('BSE')">BSE</button>
+              <button class="csp-exch-btn"         id="exch-OTH" onclick="setExch('Other')">Other</button>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;">
+          <div class="csp-field-wrap" style="flex:1">
+            <span class="csp-lbl">Lot size (optional · F&amp;O)</span>
+            <input class="csp-field" type="text" inputmode="numeric" id="lotSize" placeholder="e.g. 25" style="width:100%"
+              oninput="onLotSizeInput()">
+          </div>
+        </div>
+      </div>
+      <!-- Recent custom stocks memory -->
+      <div class="recent-custom" id="recentCustomDiv">
+        <div class="rc-hdr">RECENTLY USED CUSTOM STOCKS</div>
+        <div class="rc-pills" id="recentCustomPills"></div>
+      </div>
+      <!-- Unlisted stock manual entry -->
+      <div class="unlisted-panel" id="unlistedPanel">
+        <div class="unlisted-label">⚠ Stock not in list? Enter name &amp; price manually below — CMP field is always editable.</div>
+      </div>
+    </div>
+    <!-- Manual CMP override -->
+    <div class="irow">
+      <span class="iico">⌁</span>
+      <span class="ilbl">Stock price (CMP)<small>Auto-filled from stock search above · or enter manually</small></span>
+      <input class="ifield" type="text" inputmode="decimal" id="cmp" placeholder="1200"
+        onkeydown="bk(event,'d')" onpaste="bp(event,'d')" oninput="cl(this,'d');go();saveInputs();onCmpManualInput()">
+    </div>
+    <!-- Entry type selector -->
+    <div class="entry-type-row">
+      <span class="entry-type-lbl">Entry type<small>How you plan to enter the trade</small></span>
+      <div class="et-wrap">
+        <button class="et-btn active" id="et-market"   onclick="setEntryType('market')">Market</button>
+        <button class="et-btn"        id="et-limit"    onclick="setEntryType('limit')">Limit</button>
+        <button class="et-btn"        id="et-breakout" onclick="setEntryType('breakout')">Breakout</button>
+        <button class="et-btn"        id="et-pullback" onclick="setEntryType('pullback')">Pullback</button>
+      </div>
+    </div>
+    <!-- Entry price (shown for non-market) -->
+    <div class="entry-price-row irow" id="entryPriceRow">
+      <span class="iico">⌁</span>
+      <span class="ilbl" id="entryPriceLbl">Entry price (limit)<small>Price at which you plan to enter</small></span>
+      <input class="ifield" type="text" inputmode="decimal" id="entryPrice" placeholder="auto"
+        onkeydown="bk(event,'d')" onpaste="bp(event,'d')" oninput="cl(this,'d');go();saveInputs()">
+    </div>
+    <div class="igroup-lbl sl-grp">Stop loss settings</div>
+    <div class="irow">
+      <span class="iico">↓</span>
+      <span class="ilbl">SL Distance %<small>How far below entry price to place your stop loss</small></span>
+      <input class="ifield" type="text" inputmode="decimal" id="slpct" value="3"
+        onkeydown="bk(event,'d')" onpaste="bp(event,'d')" oninput="cl(this,'d');go();saveInputs()">
+      <span class="isuf">%</span>
+    </div>
+    <!-- Position sizing mode toggle -->
+    <div class="sizing-toggle-row">
+      <span class="sizing-lbl">Position sizing<small>How to calculate shares to buy</small></span>
+      <div class="siz-wrap">
+        <button class="siz-btn active" id="siz-pct"   onclick="setSizingMode('pct')">% Capital</button>
+        <button class="siz-btn"        id="siz-fixed" onclick="setSizingMode('fixed')">₹ Fixed</button>
+      </div>
+    </div>
+    <div class="irow" id="capRiskRow">
+      <span class="iico">⚠</span>
+      <span class="ilbl">Capital Risk % per trade<small>Max % of your capital you can lose on this trade · max 10%</small></span>
+      <input class="ifield" type="text" inputmode="decimal" id="caprisk" value="2"
+        onkeydown="bk(event,'d')" onpaste="bp(event,'d')" oninput="cl(this,'d');go();saveInputs()">
+      <span class="isuf">%</span>
+    </div>
+    <!-- Fixed ₹ risk row -->
+    <div class="fixed-risk-row irow" id="fixedRiskRow">
+      <span class="iico">₹</span>
+      <span class="ilbl">Fixed ₹ risk per trade<small>Exact rupees you are willing to lose on this trade</small></span>
+      <input class="ifield" type="text" inputmode="numeric" id="fixedRisk" placeholder="e.g. 5000"
+        onkeydown="bk(event,'i')" onpaste="bp(event,'i')" oninput="cl(this,'i');go();saveInputs()">
+    </div>
+    <!-- Max shares cap -->
+    <div class="maxshares-row irow" id="maxSharesRow">
+      <span class="iico">#</span>
+      <span class="ilbl">Max shares cap<small>Optional · limit qty regardless of risk calculation</small></span>
+      <input class="ifield" type="text" inputmode="numeric" id="maxShares" placeholder="no cap"
+        onkeydown="bk(event,'i')" onpaste="bp(event,'i')" oninput="cl(this,'i');go();saveInputs()">
+    </div>
+    <!-- Max alloc override -->
+    <div class="maxalloc-row irow" id="maxAllocRow">
+      <span class="iico">%</span>
+      <span class="ilbl">Max capital allocation %<small>Override default 25% cap per trade (max 50%)</small></span>
+      <input class="ifield" type="text" inputmode="decimal" id="maxAlloc" placeholder="25"
+        onkeydown="bk(event,'d')" onpaste="bp(event,'d')" oninput="cl(this,'d');go();saveInputs()">
+      <span class="isuf">%</span>
+    </div>
+    <!-- Toggle to show advanced sizing options -->
+    <div style="padding:7px 16px;border-bottom:1px solid var(--b1);cursor:pointer;-webkit-tap-highlight-color:transparent;" onclick="toggleAdvancedSizing()">
+      <span id="advSizingToggleLbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text);letter-spacing:0.06em;">▶ ADVANCED: max shares cap + alloc override</span>
+    </div>
+    <div class="igroup-lbl rw-grp">Target settings</div>
+    <div class="irow">
+      <span class="iico">↑</span>
+      <span class="ilbl">Reward %<small>How far above CMP is your target · must be greater than SL %</small></span>
+      <input class="ifield" type="text" inputmode="decimal" id="rewpct" value="8"
+        onkeydown="bk(event,'d')" onpaste="bp(event,'d')" oninput="cl(this,'d');go();saveInputs()">
+      <span class="isuf">%</span>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-lbl">Trade type<small>Affects transaction cost calculation</small></span>
+      <div class="toggle-wrap">
+        <button class="tgl-btn active delivery" id="btn-delivery" onclick="setMode('delivery')">Delivery</button>
+        <button class="tgl-btn intraday"         id="btn-intraday" onclick="setMode('intraday')">Intraday</button>
+      </div>
+    </div>
+    <div id="mode-indicator" style="
+      padding:8px 16px;
+      border-bottom:1px solid var(--b1);
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      background:rgba(0,245,160,0.05);
+      transition:background 0.2s;
+    ">
+      <span id="mode-desc" style="font-size:11px;color:var(--text);font-family:'DM Mono',monospace;"></span>
+      <span id="mode-cost-badge" style="font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;"></span>
+    </div>
+    <div class="ihint">
+      <strong>Auto mode</strong> → live price from NSE (green = market open · gray = last close) · <strong>Manual mode</strong> → enter custom stock + price<br>
+      <strong>Entry type</strong>: Market = use CMP · Limit/Breakout/Pullback = enter your target entry price<br>
+      <strong>SL %</strong> = price distance below entry &nbsp;·&nbsp; <strong>Capital Risk %</strong> = max % of capital to lose this trade &nbsp;·&nbsp; <strong>Reward % must be &gt; SL %</strong>
+    </div>
+  </div>
+  <div class="step-nudge" id="stepNudge"></div>
+
+  <!-- ATR / Volatility Intelligence Panel -->
+  <div class="atr-panel" id="atrPanel">
+    <div class="atr-hdr" onclick="toggleATR()">
+      <div>
+        <span class="atr-title">📊 Volatility Intelligence <small>ATR-based SL suggestion + sizing check</small></span>
+      </div>
+      <span class="atr-toggle-ico" id="atrToggleIco">▾</span>
+    </div>
+    <div class="atr-body" id="atrBody">
+      <div style="font-size:11px;color:var(--text);margin-bottom:10px;line-height:1.6;">Enter recent High/Low candles (last 14 sessions) or just High &amp; Low of a single representative candle to estimate ATR. Then get a smart SL suggestion and volatility warnings.</div>
+      <div class="atr-input-row">
+        <div class="atr-field-wrap">
+          <span class="atr-lbl">Recent High</span>
+          <input class="atr-field" type="text" inputmode="decimal" id="atrHigh" placeholder="e.g. 1250"
+            onkeydown="bk(event,'d')" oninput="cl(this,'d')">
+        </div>
+        <div class="atr-field-wrap">
+          <span class="atr-lbl">Recent Low</span>
+          <input class="atr-field" type="text" inputmode="decimal" id="atrLow" placeholder="e.g. 1180"
+            onkeydown="bk(event,'d')" oninput="cl(this,'d')">
+        </div>
+        <div class="atr-field-wrap">
+          <span class="atr-lbl">Prev Close</span>
+          <input class="atr-field" type="text" inputmode="decimal" id="atrPrevClose" placeholder="auto"
+            onkeydown="bk(event,'d')" oninput="cl(this,'d')">
+        </div>
+        <button class="atr-calc-btn" onclick="calcATR()">Calculate</button>
+      </div>
+      <div class="atr-results" id="atrResults">
+        <div class="atr-grid" id="atrGrid"></div>
+        <div class="atr-suggestion" id="atrSuggestion"></div>
+        <div class="atr-hint">ATR = Average True Range (single-candle estimate used here). True ATR uses 14-period average. This gives a directional guide.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- STEP 2 -->
+<div class="sec" id="step2sec">
+  <div class="step-hd">
+    <span class="step-n">2</span>
+    <div>
+      <div class="step-title">Your Trade Plan</div>
+      <span class="step-sub">Exact prices, shares to buy, profit/loss after transaction costs</span>
+    </div>
+  </div>
+  <div id="results">
+    <div class="res-placeholder"><p>↑ Enter your trade details above to see the plan</p></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:8px;">
+    <button class="copy-btn" id="copyBtn" onclick="copyTradeSummary()" style="display:none;flex:1">⎘ Copy Trade Summary</button>
+    <button class="copy-btn" id="saveTradeBtn" onclick="saveTrade()" style="display:none;flex:1;color:var(--green);border-color:var(--gbord)">＋ Save to Journal</button>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TRADE JOURNAL -->
+<div class="sec" id="journalSec">
+  <div class="step-hd">
+    <span class="step-n" style="background:var(--violet);color:#05050f">J</span>
+    <div style="flex:1">
+      <div class="step-title">Trade Journal</div>
+      <span class="step-sub">Saved trade plans · stored locally on your device</span>
+    </div>
+    <button onclick="clearJournal()" style="flex-shrink:0;background:var(--bg3);border:1px solid var(--rbord);border-radius:var(--rsm);padding:6px 12px;color:var(--red);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;letter-spacing:0.05em;display:none" id="clearJournalBtn">✕ Clear All</button>
+  </div>
+  <div id="journalList">
+    <div class="res-placeholder"><p style="color:var(--faint)">No saved trades yet · fill a trade plan above and click "Save to Journal"</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="disc-footer">
+    ⚠ <strong>DISCLAIMER:</strong> This tool is for educational &amp; informational use only. NOT financial advice, NOT investment advice, and NOT a trading recommendation. <strong>@equityforu and Equity &amp; Profit bear absolutely no legal or financial responsibility</strong> for any profit or loss arising from use of this tool. Markets carry risk — you can lose your entire invested capital. <strong>All trading decisions are solely and entirely your own responsibility.</strong> Please consult a SEBI-registered investment advisor before investing.
+  </div>
+  <div class="footer-brand">
+    <span class="fb-text">Tool developed by <strong>Equity &amp; Profit</strong> · <span style="color:var(--violet)">@equityforu</span> · v33</span>
+    <a class="fb-yt" href="https://www.youtube.com/@equityforu" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="#ff7070"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+      Watch on YouTube
+    </a>
+  </div>
+</div>
+
+</div>
+<script>
+/* ═══════════════════════════════════════════════════
+   SMART TRADE CALCULATOR v33
+   v33: Manual mode toggle (explicit Auto/Manual)
+        Custom stock name + exchange + lot size
+        Last-used custom stocks memory
+        Data source confidence badge + last updated
+        Entry type: Market / Limit / Breakout / Pullback
+        Position sizing: % Capital or Fixed ₹ risk
+        Max shares cap + max alloc % override
+        ATR-based SL suggestion panel
+        Smart volatility warnings (tight SL, slippage risk, intraday caution)
+        Fallback: auto-switches to manual if fetch fails
+   v9:  CORS proxy + cost on fill prices
+   v10: Intelligent slippage (price-tier model)
+   v11-v12: Proxy fallbacks (Yahoo blocks all)
+   v13: Cloudflare Worker backend — only real fix.
+        Yahoo has Cloudflare bot-shield on all APIs.
+        No browser fetch works. Worker fetches
+        server-side with real browser headers → works.
+        Set WORKER_URL once, done forever.
+═══════════════════════════════════════════════════ */
+
+/* ── TRADE MODE ── */
+let TRADE_MODE = 'delivery';
+
+/* ── v33 NEW STATE ── */
+let PRICE_MODE   = 'auto';    // 'auto' | 'manual'
+let ENTRY_TYPE   = 'market';  // 'market' | 'limit' | 'breakout' | 'pullback'
+let SIZING_MODE  = 'pct';     // 'pct' | 'fixed'
+let CUSTOM_EXCH  = 'NSE';
+let DATA_SOURCE  = 'none';    // 'live' | 'cached' | 'manual' | 'error'
+let DATA_TS      = null;      // timestamp of last fetch
+let ADV_SIZING_OPEN = false;
+let ATR_OPEN     = false;
+
+/* ── PRICE MODE ── */
+function setPriceMode(mode){
+  PRICE_MODE = mode;
+  document.getElementById('btn-mode-auto').className   = 'mseg-btn' + (mode==='auto'   ? ' active-auto'   : '');
+  document.getElementById('btn-mode-manual').className = 'mseg-btn' + (mode==='manual' ? ' active-manual' : '');
+  document.getElementById('autoSearchRow').style.display  = mode==='auto'   ? '' : 'none';
+  closeAC();
+  document.getElementById('customStockPanel').classList.toggle('visible', mode==='manual');
+  if(mode==='manual'){
+    setDataSource('manual');
+    loadRecentCustom();
+    document.getElementById('unlistedPanel').classList.remove('visible');
+    document.getElementById('offlineTip').style.display='none';
+    // populate siName from custom name
+    var n = (document.getElementById('customName').value||'').trim();
+    if(n) document.getElementById('siName').textContent = n;
+    document.getElementById('siExch').textContent = CUSTOM_EXCH;
+  } else {
+    // switching back to auto — clear manual stock info
+    clearStockUI();
+    setDataSource('none');
+  }
+  saveInputs();
+}
+
+/* ── DATA SOURCE BADGE ── */
+function setDataSource(type, ts){
+  DATA_SOURCE = type;
+  DATA_TS     = ts || (type!=='none' ? new Date() : null);
+  var row   = document.getElementById('dataSourceRow');
+  var badge = document.getElementById('dataSourceBadge');
+  var tsEl  = document.getElementById('dataLastUpdated');
+  if(!row) return;
+  if(type==='none'){row.style.display='none';return;}
+  row.style.display='flex';
+  var labels = {live:'● LIVE',cached:'◌ CACHED',manual:'✎ MANUAL',error:'⚠ FAILED'};
+  badge.textContent = labels[type]||type.toUpperCase();
+  badge.className   = 'data-badge '+type;
+  if(DATA_TS){
+    var mins = Math.round((new Date()-DATA_TS)/60000);
+    tsEl.textContent = mins < 1 ? 'Updated just now' : 'Updated '+mins+'m ago';
+  } else {
+    tsEl.textContent = '';
+  }
+}
+/* Refresh "X min ago" display every 60s */
+setInterval(function(){
+  if(DATA_TS && DATA_SOURCE!=='none') setDataSource(DATA_SOURCE, DATA_TS);
+}, 60000);
+
+/* ── CUSTOM STOCK ── */
+function onCustomNameInput(){
+  var n = (document.getElementById('customName').value||'').trim().toUpperCase();
+  if(n){
+    document.getElementById('siName').textContent = n;
+    document.getElementById('siExch').textContent = CUSTOM_EXCH;
+    document.getElementById('stockInfoStrip').classList.add('visible');
+  }
+  go(); saveInputs();
+}
+function setExch(e){
+  CUSTOM_EXCH = e;
+  ['NSE','BSE','OTH'].forEach(function(x){
+    document.getElementById('exch-'+x).classList.toggle('active', x===e||(e==='Other'&&x==='OTH'));
+  });
+  document.getElementById('siExch').textContent = e;
+  saveInputs();
+}
+function onLotSizeInput(){ go(); saveInputs(); }
+
+/* ── RECENT CUSTOM STOCKS ── */
+const LS_RECENT = 'stc_v33_recent';
+function saveRecentCustom(name, exch){
+  if(!name) return;
+  try{
+    var list = JSON.parse(localStorage.getItem(LS_RECENT)||'[]');
+    list = list.filter(function(x){return x.name!==name;});
+    list.unshift({name:name, exch:exch||'NSE'});
+    list = list.slice(0,8);
+    localStorage.setItem(LS_RECENT, JSON.stringify(list));
+  }catch(e){}
+}
+function loadRecentCustom(){
+  try{
+    var list = JSON.parse(localStorage.getItem(LS_RECENT)||'[]');
+    var div  = document.getElementById('recentCustomDiv');
+    var pills= document.getElementById('recentCustomPills');
+    if(!list.length){div.classList.remove('visible');return;}
+    div.classList.add('visible');
+    pills.innerHTML = list.map(function(x){
+      return '<span class="rc-pill" onclick="useRecentCustom(\''+x.name.replace(/'/g,'\\\'')+'\'  ,\''+x.exch+'\')">'+x.name+'<span style="font-size:8px;color:var(--faint);margin-left:4px">'+x.exch+'</span></span>';
+    }).join('');
+  }catch(e){}
+}
+function useRecentCustom(name, exch){
+  document.getElementById('customName').value = name;
+  setExch(exch);
+  onCustomNameInput();
+}
+
+/* ── ENTRY TYPE ── */
+function setEntryType(t){
+  ENTRY_TYPE = t;
+  ['market','limit','breakout','pullback'].forEach(function(x){
+    document.getElementById('et-'+x).classList.toggle('active', x===t);
+  });
+  var row  = document.getElementById('entryPriceRow');
+  var lbl  = document.getElementById('entryPriceLbl');
+  var hints = {limit:'Entry price (limit)<small>Price at which you want to buy</small>',
+               breakout:'Breakout price<small>Price above CMP — enter when stock breaks this level</small>',
+               pullback:'Pullback price<small>Price below CMP — enter on dip to this level</small>'};
+  if(t==='market'){
+    row.classList.remove('visible');
+  } else {
+    row.classList.add('visible');
+    lbl.innerHTML = hints[t]||hints['limit'];
+  }
+  go(); saveInputs();
+}
+
+/* ── POSITION SIZING MODE ── */
+function setSizingMode(m){
+  SIZING_MODE = m;
+  document.getElementById('siz-pct').classList.toggle('active', m==='pct');
+  document.getElementById('siz-fixed').classList.toggle('active', m==='fixed');
+  document.getElementById('capRiskRow').style.display   = m==='pct'   ? '' : 'none';
+  document.getElementById('fixedRiskRow').classList.toggle('visible', m==='fixed');
+  go(); saveInputs();
+}
+
+/* ── ADVANCED SIZING TOGGLE ── */
+function toggleAdvancedSizing(){
+  ADV_SIZING_OPEN = !ADV_SIZING_OPEN;
+  document.getElementById('maxSharesRow').classList.toggle('visible', ADV_SIZING_OPEN);
+  document.getElementById('maxAllocRow').classList.toggle('visible', ADV_SIZING_OPEN);
+  document.getElementById('advSizingToggleLbl').textContent =
+    (ADV_SIZING_OPEN ? '▼' : '▶') + ' ADVANCED: max shares cap + alloc override';
+}
+
+/* ── ATR PANEL ── */
+function toggleATR(){
+  ATR_OPEN = !ATR_OPEN;
+  document.getElementById('atrBody').classList.toggle('open', ATR_OPEN);
+  document.getElementById('atrToggleIco').classList.toggle('open', ATR_OPEN);
+}
+function calcATR(){
+  var high = parseFloat(document.getElementById('atrHigh').value)||0;
+  var low  = parseFloat(document.getElementById('atrLow').value)||0;
+  var prev = parseFloat(document.getElementById('atrPrevClose').value)||
+             parseFloat(document.getElementById('cmp').value)||0;
+  var cmp  = parseFloat(document.getElementById('cmp').value)||0;
+
+  if(!high||!low||high<=low){
+    showToast('Enter valid High > Low values');
+    return;
+  }
+  // True Range = max(High-Low, |High-PrevClose|, |Low-PrevClose|)
+  var hl   = high - low;
+  var hpc  = prev ? Math.abs(high - prev) : hl;
+  var lpc  = prev ? Math.abs(low  - prev) : hl;
+  var tr   = Math.max(hl, hpc, lpc);
+  var atrPct = cmp ? (tr/cmp*100) : 0;
+
+  // SL suggestions: 1× ATR (tight), 1.5× (standard), 2× (wide)
+  var sl1  = cmp ? (tr/cmp*100).toFixed(2)        : 0;
+  var sl15 = cmp ? (tr*1.5/cmp*100).toFixed(2)    : 0;
+  var sl2  = cmp ? (tr*2/cmp*100).toFixed(2)      : 0;
+
+  // Volatility assessment
+  var volLevel, volColor;
+  if     (atrPct < 1)  {volLevel='Low';     volColor='green';}
+  else if(atrPct < 2.5){volLevel='Moderate';volColor='amber';}
+  else if(atrPct < 5)  {volLevel='High';    volColor='amber';}
+  else                  {volLevel='Very High';volColor='red';}
+
+  // Intraday caution
+  var intradayCaution = atrPct >= 3;
+  // Slippage risk
+  var slippageRisk = (cmp < 100) || atrPct >= 4;
+
+  var grid = document.getElementById('atrGrid');
+  var res  = document.getElementById('atrResults');
+  var sug  = document.getElementById('atrSuggestion');
+
+  grid.innerHTML = `
+    <div class="atr-card"><div class="atr-card-lbl">True Range</div><div class="atr-card-val amber">₹${tr.toFixed(2)}</div><div class="atr-card-sub">${atrPct.toFixed(2)}% of price</div></div>
+    <div class="atr-card"><div class="atr-card-lbl">Volatility</div><div class="atr-card-val ${volColor}">${volLevel}</div><div class="atr-card-sub">ATR% ${atrPct.toFixed(2)}</div></div>
+    <div class="atr-card"><div class="atr-card-lbl">1× ATR SL</div><div class="atr-card-val cyan">${sl1}%</div><div class="atr-card-sub">₹${(cmp*(1-sl1/100)).toFixed(0)} tight</div></div>
+    <div class="atr-card"><div class="atr-card-lbl">1.5× ATR SL</div><div class="atr-card-val green">${sl15}%</div><div class="atr-card-sub">₹${(cmp*(1-sl15/100)).toFixed(0)} standard</div></div>
+    <div class="atr-card"><div class="atr-card-lbl">2× ATR SL</div><div class="atr-card-val amber">${sl2}%</div><div class="atr-card-sub">₹${(cmp*(1-sl2/100)).toFixed(0)} wide</div></div>
+    <div class="atr-card"><div class="atr-card-lbl">H–L Range</div><div class="atr-card-val cyan">₹${hl.toFixed(2)}</div><div class="atr-card-sub">${(hl/cmp*100).toFixed(2)}%</div></div>
+  `;
+
+  var warnings = '';
+  if(intradayCaution) warnings += '<br>⚠ <strong style="color:var(--amber)">Intraday caution:</strong> ATR% >3% — this stock has wide daily swings. Intraday SLs get hit frequently. Consider delivery or wider SL.';
+  if(slippageRisk)    warnings += '<br>⚠ <strong style="color:var(--red)">Slippage risk:</strong> ' + (cmp<100?'Low-price stock — bid-ask spread is wide as % of price. ':'') + (atrPct>=4?'High ATR% → market is moving fast, SL exits can slip significantly. ':'') + 'Use limit orders where possible.';
+
+  sug.innerHTML = `<strong>Suggested SL range for this stock:</strong> ${sl1}% (tight 1×ATR) → ${sl15}% (standard 1.5×ATR) → ${sl2}% (wide 2×ATR)
+    <span class="use-btn" onclick="applySLFromATR(${sl15})">Use ${sl15}%</span>
+    <br><span style="color:var(--text)">Standard rule: SL should be at least 1× ATR away from entry so normal volatility doesn't stop you out.</span>${warnings}`;
+
+  res.classList.add('visible');
+}
+function applySLFromATR(val){
+  document.getElementById('slpct').value = val;
+  go(); saveInputs();
+  showToast('SL set to '+val+'% from ATR ✓');
+}
+
+/* ── SMART VOLATILITY WARNINGS ── */
+function getSmartWarnings(cmp, slPct, d){
+  var warnings = [];
+  if(!cmp||!slPct||!d) return warnings;
+
+  // ATR-based SL tightness check (we estimate ATR as 1.5% of CMP for large-cap, scaled)
+  // If user has entered ATR data, use it; else use heuristic
+  var high = parseFloat(document.getElementById('atrHigh').value)||0;
+  var low  = parseFloat(document.getElementById('atrLow').value)||0;
+  if(high>low && cmp>0){
+    var tr     = Math.max(high-low, 0);
+    var atrPct = tr/cmp*100;
+    if(slPct < atrPct * 0.8){
+      warnings.push({type:'red', title:'SL too tight for this stock\'s volatility',
+        text:`Your SL is ${slPct.toFixed(1)}% but the stock's recent range is ${atrPct.toFixed(1)}%. Normal daily movement will stop you out before your thesis plays out. Consider SL ≥ ${(atrPct*1.2).toFixed(1)}%.`});
+    }
+    if(atrPct > 5 && TRADE_MODE==='intraday'){
+      warnings.push({type:'amber', title:'Avoid intraday for this stock',
+        text:`ATR% is ${atrPct.toFixed(1)}% — extremely high intraday volatility. Rapid swings will hit your SL unpredictably. This stock is better suited for positional/delivery trades with a wider SL.`});
+    }
+    if(atrPct > 3 && cmp < 100){
+      warnings.push({type:'amber', title:'High slippage risk stock',
+        text:`Low price (₹${cmp.toLocaleString('en-IN')}) + high volatility = wide bid-ask spread relative to price. Your actual SL fill can be significantly lower than the SL price shown. Build in an extra 0.5–1% buffer.`});
+    }
+  }
+
+  // CMP-based slippage risk (no ATR data needed)
+  if(cmp < 50){
+    warnings.push({type:'amber', title:'High slippage risk — low-price stock',
+      text:`Price below ₹50 — bid-ask spread as % of price is very wide. SL exits can fill much lower than expected. Intraday is especially risky. Use limit orders and add extra SL buffer.`});
+  }
+
+  // Position capping warning
+  if(d.cappedByAlloc){
+    // already handled by allocWarn
+  }
+
+  // Very high SL
+  if(slPct > 10){
+    warnings.push({type:'amber', title:'Very wide stop loss',
+      text:`SL at ${slPct.toFixed(1)}% requires a ${(slPct*2).toFixed(1)}%+ reward to maintain 1:2 R:R. Large-cap stocks rarely move 10%+ in one session. Consider splitting the trade or waiting for a better entry closer to support.`});
+  }
+
+  return warnings;
+}
+
+// Cost rates per side (entry + exit separately)
+// Delivery: STT 0.1% buy + 0.1% sell, brokerage ~0.1% each, stamp+other ~0.05% each
+// Intraday: STT nil buy + 0.025% sell, brokerage ~0.03% each, stamp+other ~0.02% each
+const COST = {
+  delivery: { entry: 0.0025, exit: 0.0025 }, // 0.25% each side = ~0.5% round trip
+  intraday: { entry: 0.0005, exit: 0.0007 }  // 0.05% + 0.07% = ~0.12% round trip
+};
+
+/* ── INTELLIGENT SLIPPAGE MODEL ──────────────────────────────────────
+   Static 0.05% for all stocks was wrong — Reliance & a ₹10 penny stock
+   have completely different market depth and bid-ask spreads.
+
+   Model factors:
+   ① CMP (price range) — low-priced stocks have wider spread as % of price
+   ② Intraday vs Delivery — intraday needs speed → market orders → more slip
+   ③ Asymmetry — SL exits slip more than target exits (panic/stop cascade)
+
+   Slip tiers (delivery baseline, intraday multiplied on top):
+   ┌──────────────────────┬──────────┬───────────────────────────────┐
+   │ Price range          │ Slip %   │ Why                           │
+   ├──────────────────────┼──────────┼───────────────────────────────┤
+   │ ≥ ₹500 (large-cap)  │ 0.03%   │ Deep order book, tight spread │
+   │ ₹100–₹499 (mid)     │ 0.08%   │ Moderate depth                │
+   │ ₹20–₹99  (small)    │ 0.18%   │ Thin book, wider spread       │
+   │ < ₹20    (micro)    │ 0.40%   │ Penny/micro — very wide spread│
+   └──────────────────────┴──────────┴───────────────────────────────┘
+   Intraday multiplier: ×1.5 (market order urgency)
+   SL exit asymmetry:   ×1.3 on top of base (stop cascades, gaps)
+──────────────────────────────────────────────────────────────────── */
+function getSlippage(cmp) {
+  // Base slippage by price tier
+  let base;
+  if      (cmp >= 500) base = 0.0003;   // ₹500+  : 0.03%
+  else if (cmp >= 100) base = 0.0008;   // ₹100–499: 0.08%
+  else if (cmp >= 20)  base = 0.0018;   // ₹20–99 : 0.18%
+  else                 base = 0.0040;   // <₹20   : 0.40%
+
+  // Intraday: market order urgency adds ~50% more slip
+  const modeMulti = (TRADE_MODE === 'intraday') ? 1.5 : 1.0;
+
+  const entrySlip = base * modeMulti;           // buy fills higher
+  const tgtSlip   = base * modeMulti;           // limit sell — same as entry
+  const slSlip    = base * modeMulti * 1.3;     // SL fill — panic/cascade × 1.3
+
+  return { entrySlip, tgtSlip, slSlip };
+}
+
+function costRates(){ return COST[TRADE_MODE]; }
+
+function setMode(m){
+  TRADE_MODE=m;
+  document.getElementById('btn-delivery').className='tgl-btn delivery'+(m==='delivery'?' active':'');
+  document.getElementById('btn-intraday').className='tgl-btn intraday'+(m==='intraday'?' active':'');
+  updateModeIndicator();
+  go();
+  saveInputs();
+}
+
+function updateModeIndicator(){
+  const ind=document.getElementById('mode-indicator');
+  const desc=document.getElementById('mode-desc');
+  const badge=document.getElementById('mode-cost-badge');
+  if(TRADE_MODE==='delivery'){
+    ind.style.background='rgba(0,245,160,0.05)';
+    desc.textContent='Entry: STT 0.1% + brokerage 0.1% + stamp · Exit: STT 0.1% + brokerage 0.1% + charges · ~0.5% round trip';
+    desc.style.color='rgba(0,245,160,0.85)';
+    badge.textContent='~0.5% total';
+    badge.style.cssText='font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;background:rgba(0,245,160,0.12);color:var(--green);border:1px solid rgba(0,245,160,0.30)';
+  } else {
+    ind.style.background='rgba(255,208,96,0.05)';
+    desc.textContent='Entry: brokerage 0.03% + stamp · Exit: STT 0.025% + brokerage 0.03% + charges · ~0.12% round trip';
+    desc.style.color='rgba(255,208,96,0.85)';
+    badge.textContent='~0.12% total';
+    badge.style.cssText='font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;background:rgba(255,208,96,0.12);color:var(--amber);border:1px solid rgba(255,208,96,0.30)';
+  }
+}
+
+/* ── INPUT GUARDS ── */
+function bk(e,m){
+  const safe=['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Home','End'];
+  if(safe.includes(e.key))return;
+  if(m==='i'&&!/^[0-9]$/.test(e.key)){e.preventDefault();return;}
+  if(m==='d'&&!/^[0-9.]$/.test(e.key)){e.preventDefault();return;}
+  if(m==='d'&&e.key==='.'&&e.target.value.includes('.')){e.preventDefault();}
+}
+function bp(e,m){
+  e.preventDefault();
+  let t=(e.clipboardData||window.clipboardData).getData('text');
+  if(m==='i')t=t.replace(/[^0-9]/g,'');
+  else{t=t.replace(/[^0-9.]/g,'');const p=t.split('.');if(p.length>2)t=p[0]+'.'+p.slice(1).join('');}
+  e.target.value=t;cl(e.target,m);go();
+}
+function cl(el,m){
+  let v=el.value;
+  if(m==='i'){v=v.replace(/[^0-9]/g,'');if(v.length>1&&v[0]==='0')v=v.replace(/^0+/,'')||'0';}
+  else{v=v.replace(/[^0-9.]/g,'');const p=v.split('.');if(p.length>2)v=p[0]+'.'+p.slice(1).join('');if(v.length>1&&v[0]==='0'&&v[1]!=='.')v=v.replace(/^0+/,'')||'0';}
+  if(el.value!==v)el.value=v;
+}
+
+/* ── LOCALSTORAGE PERSISTENCE ── */
+const LS = 'stc_v33';
+function saveInputs(){
+  try{
+    localStorage.setItem(LS, JSON.stringify({
+      cap:        document.getElementById('cap').value,
+      cmp:        document.getElementById('cmp').value,
+      slpct:      document.getElementById('slpct').value,
+      caprisk:    document.getElementById('caprisk').value,
+      fixedRisk:  document.getElementById('fixedRisk').value,
+      maxShares:  document.getElementById('maxShares').value,
+      maxAlloc:   document.getElementById('maxAlloc').value,
+      rewpct:     document.getElementById('rewpct').value,
+      mode:       TRADE_MODE,
+      priceMode:  PRICE_MODE,
+      entryType:  ENTRY_TYPE,
+      sizingMode: SIZING_MODE,
+      entryPrice: document.getElementById('entryPrice').value,
+      lotSize:    document.getElementById('lotSize').value,
+      customName: document.getElementById('customName').value,
+      customExch: CUSTOM_EXCH,
+      stock:      document.getElementById('stockInput').value
+    }));
+  }catch(e){}
+}
+function loadInputs(){
+  try{
+    var s = localStorage.getItem(LS);
+    if(!s) return;
+    var d = JSON.parse(s);
+    if(d.cap)        document.getElementById('cap').value        = d.cap;
+    if(d.cmp)        document.getElementById('cmp').value        = d.cmp;
+    if(d.slpct)      document.getElementById('slpct').value      = d.slpct;
+    if(d.caprisk)    document.getElementById('caprisk').value    = d.caprisk;
+    if(d.fixedRisk)  document.getElementById('fixedRisk').value  = d.fixedRisk;
+    if(d.maxShares)  document.getElementById('maxShares').value  = d.maxShares;
+    if(d.maxAlloc)   document.getElementById('maxAlloc').value   = d.maxAlloc;
+    if(d.rewpct)     document.getElementById('rewpct').value     = d.rewpct;
+    if(d.entryPrice) document.getElementById('entryPrice').value = d.entryPrice;
+    if(d.lotSize)    document.getElementById('lotSize').value    = d.lotSize;
+    if(d.customName) document.getElementById('customName').value = d.customName;
+    if(d.stock)      document.getElementById('stockInput').value = d.stock;
+    if(d.mode)       setMode(d.mode);
+    if(d.sizingMode) setSizingMode(d.sizingMode);
+    if(d.entryType)  setEntryType(d.entryType);
+    if(d.customExch) setExch(d.customExch);
+    if(d.priceMode)  setPriceMode(d.priceMode);
+    updateStepState();
+    showToast('Last session restored ✓');
+  }catch(e){}
+}
+
+/* ── RESET ── */
+function resetAll(){
+  ['cap','cmp','entryPrice','fixedRisk','maxShares','maxAlloc','lotSize','customName'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('slpct').value='3';
+  document.getElementById('caprisk').value='2';
+  document.getElementById('rewpct').value='8';
+  document.getElementById('stockInput').value='';
+  document.getElementById('unlistedPanel').classList.remove('visible');
+  document.getElementById('offlineTip').style.display='none';
+  clearStockUI();
+  setMode('delivery');
+  setSizingMode('pct');
+  setEntryType('market');
+  setPriceMode('auto');
+  try{ localStorage.removeItem(LS); }catch(e){}
+  go();
+}
+
+/* ── FORMAT ── */
+function fm(n){return '₹'+Math.round(n).toLocaleString('en-IN');}
+function fn(n){return Math.round(n).toLocaleString('en-IN');}
+function fp(n){return isNaN(n)?'—':((+n)%1===0?(+n)+'%':parseFloat(n).toFixed(1)+'%');}
+
+/* ── GET VALUES ── */
+function gv(){
+  var cmp = parseFloat(document.getElementById('cmp').value)||0;
+  // Entry price: use custom entry price for non-market types, else CMP
+  var entryRaw = parseFloat(document.getElementById('entryPrice').value)||0;
+  var entry = (ENTRY_TYPE !== 'market' && entryRaw > 0) ? entryRaw : cmp;
+  return{
+    cap:       parseFloat(document.getElementById('cap').value)||0,
+    cmp:       cmp,
+    entry:     entry,
+    slPct:     parseFloat(document.getElementById('slpct').value)||0,
+    capRisk:   parseFloat(document.getElementById('caprisk').value)||0,
+    fixedRisk: parseFloat(document.getElementById('fixedRisk').value)||0,
+    maxShares: parseFloat(document.getElementById('maxShares').value)||0,
+    maxAlloc:  parseFloat(document.getElementById('maxAlloc').value)||25,
+    rewPct:    parseFloat(document.getElementById('rewpct').value)||0,
+    lotSize:   parseInt(document.getElementById('lotSize').value)||0,
+  };
+}
+
+/* ══════════════════════════════════════════
+   CORRECTED CALC ENGINE — ALL FIXES APPLIED
+   ① Costs: buy side + sell side separately
+   ② Qty: includes cost+slippage in loss/share
+   ③ Capital cap: configurable % deployed per trade (default 25%)
+   ④ R:R: net (after costs) not gross
+   ⑤ Slippage: intelligent — price-tier based
+              entry/target/SL each get own rate
+              intraday ×1.5, SL exits ×1.3
+   ⑥ Division-by-zero: guarded
+   ⑦ v33: entry price (limit/breakout/pullback), fixed ₹ risk,
+          max shares cap, configurable max alloc %
+══════════════════════════════════════════ */
+function calc(cap,cmp,slPct,capRisk,rewPct, opts){
+  opts = opts||{};
+  var entryPrice  = opts.entry     || cmp;     // custom entry price for limit/breakout/pullback
+  var fixedRisk   = opts.fixedRisk || 0;       // fixed ₹ risk (overrides capRisk if sizingMode=fixed)
+  var maxSharesCap= opts.maxShares || 0;       // max shares hard cap
+  var maxAllocPct = opts.maxAlloc  || 25;      // capital allocation cap %
+
+  const rates = costRates();
+  const { entrySlip, tgtSlip, slSlip } = getSlippage(entryPrice);
+
+  // Slippage-adjusted prices — each exit type has its own slip rate
+  const effEntry = entryPrice * (1 + entrySlip);     // buy fills slightly higher
+  const sl       = entryPrice * (1 - slPct/100);     // SL level on chart
+  const effSL    = sl         * (1 - slSlip);         // SL order fills lower (panic fill)
+  const target   = entryPrice * (1 + rewPct/100);    // target level on chart
+  const effTgt   = target     * (1 - tgtSlip);        // limit sell fills slightly lower
+
+  // Guard: division by zero
+  if(effEntry <= effSL) return null;
+
+  // Cost per share — applied on ACTUAL FILL prices (slippage-adjusted)
+  const entryCostPS  = effEntry * rates.entry;
+  const exitSLCostPS = effSL    * rates.exit;
+  const exitTCostPS  = effTgt   * rates.exit;
+
+  // True loss per share (slippage + SL fill + both-side costs)
+  const lossPerShare   = (effEntry - effSL) + entryCostPS + exitSLCostPS;
+  // True profit per share
+  const profitPerShare = (effTgt - effEntry) - entryCostPS - exitTCostPS;
+
+  // Guard: lossPerShare must be positive
+  if(lossPerShare <= 0) return null;
+
+  // Max loss in ₹ — either % of capital or fixed ₹
+  var maxLossRs;
+  if(SIZING_MODE === 'fixed' && fixedRisk > 0){
+    maxLossRs = fixedRisk;
+  } else {
+    maxLossRs = cap * capRisk / 100;
+  }
+
+  // Position size from risk
+  const qtyByRisk = Math.floor(maxLossRs / lossPerShare);
+
+  // Capital cap: configurable % (default 25%)
+  const allocPct     = Math.min(Math.max(maxAllocPct, 5), 50);  // clamp 5–50%
+  const maxDeployed  = cap * allocPct / 100;
+  const maxQtyByCap  = Math.floor(maxDeployed / effEntry);
+
+  let qty = Math.min(qtyByRisk, maxQtyByCap);
+
+  // Max shares cap override
+  if(maxSharesCap > 0) qty = Math.min(qty, maxSharesCap);
+
+  if(qty <= 0) return null;
+
+  const deployed    = qty * effEntry;
+  const depPct      = (deployed / cap * 100);
+  const cappedByAlloc = (qtyByRisk > maxQtyByCap && (!maxSharesCap || qtyByRisk > maxSharesCap));
+
+  // P&L
+  const actLoss     = qty * lossPerShare;
+  const actProfit   = qty * profitPerShare;
+  const grossProfit = qty * (effTgt - effEntry);
+  const grossLoss   = qty * (effEntry - effSL);
+  const totalCostL  = qty * (entryCostPS + exitSLCostPS);
+  const totalCostP  = qty * (entryCostPS + exitTCostPS);
+  const slipLoss    = qty * ((effEntry - entryPrice) + (sl - effSL));
+  const slipProfit  = qty * ((effEntry - entryPrice) + (target - effTgt));
+
+  // Net R:R
+  const netRR = actLoss > 0 ? (actProfit / actLoss) : 0;
+  const grossRR = rewPct / slPct;
+
+  return {
+    // Prices
+    sl: Math.round(sl), effSL: effSL.toFixed(2),
+    target: Math.round(target), effTgt: effTgt.toFixed(2),
+    effEntry: effEntry.toFixed(2), entryPrice: entryPrice,
+    // Position
+    qty, deployed: Math.round(deployed), depPct, cappedByAlloc,
+    allocPct,
+    // P&L
+    actLoss: Math.round(actLoss), actProfit: Math.round(actProfit),
+    grossProfit: Math.round(grossProfit), grossLoss: Math.round(grossLoss),
+    totalCostL: Math.round(totalCostL), totalCostP: Math.round(totalCostP),
+    slipLoss: Math.round(slipLoss), slipProfit: Math.round(slipProfit),
+    // Ratios
+    netRR: netRR.toFixed(2), grossRR: grossRR.toFixed(2),
+    // Slippage info for display
+    entrySlipPct: (entrySlip*100).toFixed(2),
+    slSlipPct:    (slSlip*100).toFixed(2),
+    tgtSlipPct:   (tgtSlip*100).toFixed(2),
+  };
+}
+
+/* ── WARN CARD ── */
+function warn(title,body,isRed){
+  const col=isRed?'var(--red)':'var(--amber)';
+  const brd=isRed?'var(--rbord)':'var(--abord)';
+  const bg =isRed?'var(--rdim)':'var(--adim)';
+  return `<div style="padding:14px 16px;background:${bg};border:1.5px solid ${brd};border-radius:var(--r);display:flex;gap:10px;align-items:flex-start;">
+    <span style="font-size:17px;color:${col};flex-shrink:0">⚠</span>
+    <div><div style="font-size:13px;font-weight:600;color:${col};margin-bottom:4px">${title}</div>
+    <div style="font-size:12px;color:var(--text);line-height:1.6">${body}</div></div>
+  </div>`;
+}
+
+/* ── ALLOC WARNING ── */
+function allocWarn(depPct, capped, allocPct){
+  const p = parseFloat(depPct);
+  const cap_pct = allocPct||25;
+  if(capped) return `<div class="alloc-warn red"><span class="aw-icon">⚠</span><span class="aw-text"><strong style="color:var(--red)">Position capped at ${cap_pct}% of capital.</strong> Your risk-based qty was higher, but max capital per trade is limited to ${cap_pct}% (₹${Math.round(parseFloat(document.getElementById('cap').value||0)*cap_pct/100).toLocaleString('en-IN')}). This protects your portfolio from over-concentration. Reduce SL % or increase capital to get full qty.</span></div>`;
+  if(p > 20) return `<div class="alloc-warn amber"><span class="aw-icon">⚠</span><span class="aw-text"><strong style="color:var(--amber)">Watch concentration:</strong> ${p.toFixed(0)}% of capital in one trade. Recommended max is 20–25%. Reduce Capital Risk % for a smaller position.</span></div>`;
+  return '';
+}
+
+/* ── TOAST ── */
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2400);
+}
+
+/* ── COPY TRADE SUMMARY ── */
+function copyTradeSummary(){
+  var{cap,cmp,entry,slPct,capRisk,fixedRisk,maxShares,maxAlloc,rewPct}=gv();
+  var d=calc(cap,cmp,slPct,capRisk,rewPct,{entry:entry,fixedRisk:fixedRisk,maxShares:maxShares,maxAlloc:maxAlloc});
+  if(!d) return;
+  var stockName = PRICE_MODE==='manual'
+    ? (document.getElementById('customName').value||'Custom')+' ('+CUSTOM_EXCH+')'
+    : (document.getElementById('siName').textContent||document.getElementById('stockInput').value||'—');
+  var mode  = TRADE_MODE==='delivery'?'Delivery':'Intraday';
+  var etLabels = {market:'Market',limit:'Limit',breakout:'Breakout',pullback:'Pullback'};
+  var entryLine = ENTRY_TYPE!=='market' && entry!==cmp
+    ? 'Entry      '+etLabels[ENTRY_TYPE]+' @ '+fm(entry)+' (CMP '+fm(cmp)+')'
+    : 'Entry      Market @ CMP '+fm(cmp);
+  var riskLine = SIZING_MODE==='fixed'
+    ? 'Risk Mode  Fixed ₹'+fixedRisk.toLocaleString('en-IN')
+    : 'Risk Mode  '+capRisk+'% of capital';
+  var lines = [
+    '📊 Trade Plan — '+stockName+' ('+mode+')',
+    '━━━━━━━━━━━━━━━━━━━━',
+    entryLine,
+    'Stop Loss  ₹'+d.sl.toLocaleString('en-IN')+'  (−'+slPct+'%)',
+    'Target     ₹'+d.target.toLocaleString('en-IN')+'  (+'+rewPct+'%)',
+    '━━━━━━━━━━━━━━━━━━━━',
+    'Qty        '+d.qty.toLocaleString('en-IN')+' shares',
+    'Deployed   ₹'+d.deployed.toLocaleString('en-IN')+' ('+d.depPct.toFixed(0)+'% of capital)',
+    riskLine,
+    'Max Loss   −₹'+d.actLoss.toLocaleString('en-IN'),
+    'Net Profit +₹'+d.actProfit.toLocaleString('en-IN'),
+    'Net R:R    1 : '+parseFloat(d.netRR).toFixed(1),
+    'Costs      ₹'+d.totalCostP.toLocaleString('en-IN'),
+    '━━━━━━━━━━━━━━━━━━━━',
+    'Smart Trade Calculator v33 · Equity & Profit'
+  ];
+  navigator.clipboard.writeText(lines.join('\n')).then(function(){
+    var btn=document.getElementById('copyBtn');
+    if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');}
+    showToast('Trade plan copied ✓');
+    setTimeout(function(){if(btn){btn.textContent='⎘ Copy Trade Summary';btn.classList.remove('copied');}},2200);
+  }).catch(function(){ showToast('Copy failed — try manually'); });
+}
+
+/* ── RETRY FETCH ── */
+function retryFetch(){
+  setPriceMode('auto');
+  if(lastSymbol){
+    var resolved = resolveSymbol(lastSymbol);
+    setStockLoading(STOCKS[resolved]||resolved);
+    document.getElementById('offlineTip').style.display='none';
+    fetchPrice(resolved);
+  }
+}
+
+/* ── CMP manual input handler ── */
+function onCmpManualInput(){
+  if(PRICE_MODE==='manual'){
+    var n = (document.getElementById('customName').value||'').trim();
+    if(n) saveRecentCustom(n, CUSTOM_EXCH);
+    setDataSource('manual');
+  }
+}
+
+/* ── STEP SEQUENCE CONTROLLER ──
+   SEQUENCE:
+   1. Enter Capital  → stock search unlocks
+   2. Select Stock / Enter CMP  → SL/Risk/Reward unlocks
+   3. All filled  → Results shown
+── */
+function updateStepState(){
+  var cap    = parseFloat(document.getElementById('cap').value)    || 0;
+  var cmp    = parseFloat(document.getElementById('cmp').value)    || 0;
+  var nudge  = document.getElementById('stepNudge');
+  var step1  = document.getElementById('step1sec');
+  var step2  = document.getElementById('step2sec');
+
+  /* Elements to lock/unlock */
+  var stockWrap  = document.getElementById('stockSearchWrap') ||
+                   document.querySelector('.stock-search-wrap');
+  var cmpRow     = document.querySelector('#step1sec .irow:nth-of-type(2)');  /* CMP row */
+  var slGroup    = document.querySelector('.igroup-lbl.sl-grp');
+  var rwGroup    = document.querySelector('.igroup-lbl.rw-grp');
+  var toggleRow  = document.querySelector('.toggle-row');
+  var modeInd    = document.getElementById('mode-indicator');
+  var ihint      = document.querySelector('.ihint');
+
+  /* Helper: lock/unlock a DOM element */
+  function lock(el){   if(el){ el.classList.add('step-locked'); } }
+  function unlock(el){ if(el){ el.classList.remove('step-locked'); } }
+
+  /* ── STAGE 1: No capital ── */
+  if(!cap){
+    /* Lock everything except capital field */
+    lock(stockWrap); lock(cmpRow);
+    lock(slGroup); lock(rwGroup); lock(toggleRow); lock(modeInd); lock(ihint);
+    lock(step2);
+    if(nudge){
+      nudge.textContent = '① Enter your trading capital above to begin';
+      nudge.classList.add('show');
+    }
+    return;
+  }
+
+  /* ── STAGE 2: Capital filled, no CMP yet ── */
+  if(!cmp){
+    unlock(stockWrap); unlock(cmpRow);
+    lock(slGroup); lock(rwGroup); lock(toggleRow); lock(modeInd); lock(ihint);
+    lock(step2);
+    if(nudge){
+      nudge.textContent = '② Search for a stock above — price will auto-fill below';
+      nudge.classList.add('show');
+    }
+    return;
+  }
+
+  /* ── STAGE 3: Capital + CMP filled → unlock everything ── */
+  unlock(stockWrap); unlock(cmpRow);
+  unlock(slGroup); unlock(rwGroup); unlock(toggleRow); unlock(modeInd); unlock(ihint);
+  unlock(step2);
+  if(nudge){ nudge.classList.remove('show'); nudge.textContent=''; }
+}
+
+/* ── RENDER ── */
+function go(){
+  updateStepState(); /* Always sync step state first */
+  const{cap,cmp,entry,slPct,capRisk,fixedRisk,maxShares,maxAlloc,rewPct,lotSize}=gv();
+  const w=document.getElementById('results');
+
+  /* Show copy button only when we have results */
+  var copyBtn = document.getElementById('copyBtn');
+  var saveBtn = document.getElementById('saveTradeBtn');
+  function hideBtns(){ hideBtns(); if(saveBtn) saveBtn.style.display='none'; }
+
+  /* Granular missing-field guidance */
+  if(!cap){
+    hideBtns();
+    w.innerHTML='<div class="res-placeholder"><p>① Enter your trading capital to begin</p></div>';
+    return;
+  }
+  if(cap > 100000000){
+    hideBtns();
+    w.innerHTML=warn('Capital seems unrealistic','Maximum supported: ₹10 crore. Check for extra zeros.');
+    return;
+  }
+  if(!cmp){
+    hideBtns();
+    w.innerHTML='<div class="res-placeholder"><p>② ' + (PRICE_MODE==='manual' ? 'Enter stock price in CMP field below' : 'Search and select a stock — price will auto-fill') + '</p></div>';
+    return;
+  }
+  if(cmp < 0.01 || cmp > 500000){
+    hideBtns();
+    w.innerHTML=warn('CMP looks incorrect','Price must be between ₹0.01 and ₹5,00,000. Check the value in the CMP field.');
+    return;
+  }
+  // Validate entry price for non-market types
+  if(ENTRY_TYPE !== 'market'){
+    var entryRaw = parseFloat(document.getElementById('entryPrice').value)||0;
+    if(entryRaw > 0){
+      if(ENTRY_TYPE==='breakout' && entryRaw <= cmp){
+        hideBtns();
+        w.innerHTML=warn('Breakout price must be above CMP',`CMP is ${fm(cmp)}. Breakout entry should be set above current price.`,true);
+        return;
+      }
+      if(ENTRY_TYPE==='pullback' && entryRaw >= cmp){
+        hideBtns();
+        w.innerHTML=warn('Pullback price must be below CMP',`CMP is ${fm(cmp)}. Pullback entry should be set below current price.`,true);
+        return;
+      }
+    }
+  }
+  if(!slPct||slPct<=0||slPct>50){
+    hideBtns();
+    w.innerHTML=warn('↓ Enter a valid SL Distance % (0.1 – 50)','SL % is how far below entry your stop loss sits. Use 2–3% for large-caps, 5–8% for mid-caps, 8–12% for small-caps.');
+    return;
+  }
+  // Sizing validation
+  if(SIZING_MODE==='pct' && (!capRisk||capRisk<=0||capRisk>10)){
+    hideBtns();
+    w.innerHTML=warn('⚠ Enter a valid Capital Risk % (0.1 – 10)','Max % of capital you are willing to lose on this one trade. Recommended: 1–2% per trade. Hard cap: 10%.');
+    return;
+  }
+  if(SIZING_MODE==='fixed' && (!fixedRisk||fixedRisk<=0)){
+    hideBtns();
+    w.innerHTML=warn('⚠ Enter a valid Fixed ₹ Risk amount','How many rupees you are willing to lose on this trade.');
+    return;
+  }
+  if(!rewPct||rewPct<=0||rewPct>100){
+    hideBtns();
+    w.innerHTML=warn('↑ Enter a valid Reward % (0.1 – 100)','Target distance above entry. Must be greater than SL %. Minimum: Reward = 2 × SL %.');
+    return;
+  }
+  if(rewPct<=slPct){
+    hideBtns();
+    w.innerHTML=warn(
+      `↑ Reward % (${fp(rewPct)}) must be greater than SL % (${fp(slPct)})`,
+      `You are risking more than you can gain. Set Reward % to at least <strong style="color:var(--amber)">${(slPct*2).toFixed(1)}%</strong> for a minimum 1:2 R:R ratio.`,
+      true
+    );
+    return;
+  }
+  const slCheck = entry*(1-slPct/100);
+  if(slCheck<=0){
+    hideBtns();
+    w.innerHTML=warn('↓ SL % too high — stop loss price goes to zero or below',`Entry ${fm(entry)} × (1 − ${fp(slPct)}) = ₹${slCheck.toFixed(1)}. Reduce SL %.`,true);
+    return;
+  }
+
+  const d = calc(cap,cmp,slPct,capRisk,rewPct,{
+    entry: entry, fixedRisk: fixedRisk,
+    maxShares: maxShares, maxAlloc: maxAlloc
+  });
+  if(!d){
+    w.innerHTML=warn('Cannot calculate — position size is zero',`Max loss allowed = ${fm(SIZING_MODE==='fixed'?fixedRisk:cap*capRisk/100)}. SL distance per share after costs and slippage is too large relative to risk. Try: increase capital, increase risk, or pick a lower-priced stock.`);
+    return;
+  }
+
+  const netRR  = parseFloat(d.netRR);
+  const grossRR= parseFloat(d.grossRR);
+  const rrColor= netRR>=2?'var(--green)':netRR>=1.5?'var(--amber)':'var(--red)';
+  const rrNote = netRR>=2
+    ? `Net gain ₹${netRR.toFixed(1)} per ₹1 risked · Gross R:R 1:${grossRR.toFixed(1)} before costs`
+    : netRR>=1.5
+    ? `Weak net R:R — increase Reward % to ${(slPct*2).toFixed(1)}%+ for 1:2 net ratio`
+    : `Poor net R:R — set Reward % to at least ${(slPct*2).toFixed(1)}% before entering`;
+
+  const modeLabel = TRADE_MODE==='delivery'
+    ? 'Delivery · Entry 0.25% + Exit 0.25% + slippage'
+    : 'Intraday · Entry 0.05% + Exit 0.07% + slippage';
+
+  // Entry type label
+  var entryTypeLabel = '';
+  if(ENTRY_TYPE !== 'market' && entry !== cmp){
+    var etNames = {limit:'Limit',breakout:'Breakout',pullback:'Pullback'};
+    entryTypeLabel = ` · ${etNames[ENTRY_TYPE]||''} entry @ ${fm(entry)}`;
+  }
+
+  // Lot size notice
+  var lotNotice = '';
+  if(lotSize > 0){
+    var lots = Math.floor(d.qty / lotSize);
+    var adjQty = lots * lotSize;
+    if(lots > 0){
+      lotNotice = `<div style="margin-top:6px;padding:7px 12px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.18);border-radius:var(--rsm);font-size:11px;color:var(--cyan);font-family:'DM Mono',monospace;">
+        Lot size ${lotSize}: <strong>${lots} lot${lots>1?'s':''} = ${adjQty.toLocaleString('en-IN')} shares</strong> (${d.qty-adjQty>0?d.qty-adjQty+' shares rounded down':''})
+      </div>`;
+    }
+  }
+
+  // Smart warnings
+  var smartWarnHtml = '';
+  var warnings = getSmartWarnings(entry||cmp, slPct, d);
+  if(warnings.length){
+    smartWarnHtml = '<div class="smart-warnings">' +
+      warnings.map(function(w){
+        return `<div class="sw ${w.type}"><span class="sw-ico">⚠</span><div class="sw-body"><div class="sw-title">${w.title}</div><div class="sw-text">${w.text}</div></div></div>`;
+      }).join('') + '</div>';
+  }
+
+  if(copyBtn) copyBtn.style.display='';
+  var saveBtn = document.getElementById('saveTradeBtn');
+  if(saveBtn) saveBtn.style.display='';
+  w.innerHTML=`<div class="results">
+    <div class="res-pair">
+      <div class="rc sl">
+        <div class="rc-lbl">Stop loss — chart level</div>
+        <div class="rc-val">${fm(d.sl)}</div>
+        <div class="rc-sub">−${fp(slPct)} from entry · fills ~₹${d.effSL} (${d.slSlipPct}% slip)</div>
+      </div>
+      <div class="rc tgt">
+        <div class="rc-lbl">Target — chart level</div>
+        <div class="rc-val">${fm(d.target)}</div>
+        <div class="rc-sub">+${fp(rewPct)} from entry · fills ~₹${d.effTgt} (${d.tgtSlipPct}% slip)</div>
+      </div>
+    </div>
+    <div class="rc qty">
+      <div class="rc-lbl">Shares to buy${d.cappedByAlloc?' · capped at '+d.allocPct+'% capital limit':''}${entryTypeLabel}</div>
+      <div class="rc-val">${fn(d.qty)} shares</div>
+      <div class="rc-sub">Deployed: ${fm(d.deployed)} · ${d.depPct.toFixed(0)}% of capital · Entry fills ~₹${d.effEntry} (${d.entrySlipPct}% slip)</div>
+    </div>
+    ${lotNotice}
+    ${allocWarn(d.depPct, d.cappedByAlloc, d.allocPct)}
+    ${smartWarnHtml}
+    <div class="res-trio">
+      <div class="rc loss">
+        <div class="rc-lbl">Max loss if SL hits</div>
+        <div class="rc-val">−${fm(d.actLoss)}</div>
+        <div class="rc-sub">Costs ${fm(d.totalCostL)} · slippage ${fm(d.slipLoss)} included</div>
+      </div>
+      <div class="rc prof">
+        <div class="rc-lbl">Net profit if target hits</div>
+        <div class="rc-val">+${fm(d.actProfit)}</div>
+        <div class="rc-sub">Costs ${fm(d.totalCostP)} · slippage ${fm(d.slipProfit)} deducted</div>
+      </div>
+      <div class="rc rr rr-card">
+        <div class="rc-lbl">Net R:R ratio</div>
+        <div class="rc-val" style="color:${rrColor}">1 : ${netRR.toFixed(1)}</div>
+        <div class="rc-sub" style="color:${rrColor}">${rrNote}</div>
+      </div>
+    </div>
+    <div class="rc cost">
+      <div class="rc-lbl">Transaction costs · ${modeLabel}</div>
+      <div class="rc-val">${fm(d.totalCostP)}</div>
+      <div class="rc-sub">On profit exit · Loss exit costs: ${fm(d.totalCostL)} · Gross profit: +${fm(d.grossProfit)}</div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   STOCK SEARCH + LIVE PRICE ENGINE
+   Yahoo Finance API · NSE/BSE · Live + Closed
+═══════════════════════════════════════════ */
+
+const STOCKS = {
+  /* ── NIFTY 50 ── */
+  'RELIANCE':'Reliance Industries','TCS':'Tata Consultancy Services',
+  'HDFCBANK':'HDFC Bank','INFY':'Infosys','ICICIBANK':'ICICI Bank',
+  'HINDUNILVR':'Hindustan Unilever','SBIN':'State Bank of India',
+  'BHARTIARTL':'Bharti Airtel','ITC':'ITC Limited','KOTAKBANK':'Kotak Mahindra Bank',
+  'LT':'Larsen & Toubro','WIPRO':'Wipro','AXISBANK':'Axis Bank',
+  'MARUTI':'Maruti Suzuki','TITAN':'Titan Company','BAJFINANCE':'Bajaj Finance',
+  'HCLTECH':'HCL Technologies','ASIANPAINT':'Asian Paints','SUNPHARMA':'Sun Pharma',
+  'ULTRACEMCO':'UltraTech Cement','NTPC':'NTPC','POWERGRID':'Power Grid Corp',
+  'NESTLEIND':'Nestle India','TATAMOTORS':'Tata Motors','TATASTEEL':'Tata Steel',
+  'ONGC':'ONGC','COALINDIA':'Coal India','BPCL':'Bharat Petroleum',
+  'TECHM':'Tech Mahindra','DIVISLAB':'Divi Laboratories','DRREDDY':'Dr Reddys Labs',
+  'CIPLA':'Cipla','BAJAJFINSV':'Bajaj Finserv','EICHERMOT':'Eicher Motors',
+  'HINDALCO':'Hindalco Industries','JSWSTEEL':'JSW Steel','GRASIM':'Grasim Industries',
+  'HEROMOTOCO':'Hero MotoCorp','APOLLOHOSP':'Apollo Hospitals',
+  'TATACONSUM':'Tata Consumer Products','BRITANNIA':'Britannia Industries',
+  'SHREECEM':'Shree Cement','ADANIENT':'Adani Enterprises','ADANIPORTS':'Adani Ports',
+  'HAL':'Hindustan Aeronautics','BEL':'Bharat Electronics','SBILIFE':'SBI Life Insurance',
+  'HDFCLIFE':'HDFC Life Insurance','BAJAJ-AUTO':'Bajaj Auto',
+  /* ── NIFTY NEXT 50 ── */
+  'DMART':'Avenue Supermarts','PIDILITIND':'Pidilite Industries',
+  'BERGEPAINT':'Berger Paints','HAVELLS':'Havells India','MUTHOOTFIN':'Muthoot Finance',
+  'POLYCAB':'Polycab India','IRCTC':'IRCTC','RECLTD':'REC Ltd',
+  'PFC':'Power Finance Corp','NHPC':'NHPC','SJVN':'SJVN',
+  'IRFC':'IRFC','CANBK':'Canara Bank','BANKBARODA':'Bank of Baroda',
+  'PNB':'Punjab National Bank','UNIONBANK':'Union Bank of India',
+  'INDUSINDBK':'IndusInd Bank','IDFCFIRSTB':'IDFC First Bank','FEDERALBNK':'Federal Bank',
+  'CHOLAFIN':'Cholamandalam Finance','MOTHERSON':'Samvardhana Motherson',
+  'BALKRISIND':'Balkrishna Industries','ASTRAL':'Astral Ltd','PIIND':'PI Industries',
+  'UPL':'UPL Ltd','TATAPOWER':'Tata Power','ADANIGREEN':'Adani Green Energy',
+  'ADANIPOWER':'Adani Power','TORNTPOWER':'Torrent Power',
+  'ZOMATO':'Zomato','PAYTM':'One97 Communications',
+  'SIEMENS':'Siemens India','ABB':'ABB India','BOSCHLTD':'Bosch Ltd',
+  'COLPAL':'Colgate Palmolive','DABUR':'Dabur India','MARICO':'Marico',
+  'GODREJCP':'Godrej Consumer Products','PGHH':'Procter & Gamble Hygiene',
+  'EMAMILTD':'Emami Ltd','TRENT':'Trent Ltd','NAUKRI':'Info Edge India',
+  'INDIGO':'InterGlobe Aviation','CONCOR':'Container Corp of India',
+  'PETRONET':'Petronet LNG','GAIL':'GAIL India','IOC':'Indian Oil Corp',
+  'HINDPETRO':'Hindustan Petroleum','MGL':'Mahanagar Gas','IGL':'Indraprastha Gas',
+  /* ── NIFTY MIDCAP 150 ── */
+  'MFSL':'Max Financial Services','MAXHEALTH':'Max Healthcare',
+  'FORTIS':'Fortis Healthcare','LALPATHLAB':'Dr Lal PathLabs',
+  'METROPOLIS':'Metropolis Healthcare','THYROCARE':'Thyrocare Technologies',
+  'ICICIGI':'ICICI Lombard GIC','HDFCAMC':'HDFC AMC','NIPPONLIFE':'Nippon Life AMC',
+  'ABCAPITAL':'Aditya Birla Capital','MUTHOOTFIN':'Muthoot Finance',
+  'MANAPPURAM':'Manappuram Finance','LICHSGFIN':'LIC Housing Finance',
+  'CANFINHOME':'Can Fin Homes','HOMEFIRST':'Home First Finance',
+  'AAVAS':'Aavas Financiers','APTUS':'Aptus Value Housing',
+  'CREDITACC':'Credit Access Grameen','UJJIVANSFB':'Ujjivan Small Finance Bank',
+  'EQUITASBNK':'Equitas Small Finance Bank','SURYODAY':'Suryoday SFB',
+  'KARURVYSYA':'Karur Vysya Bank','DCBBANK':'DCB Bank','RBLBANK':'RBL Bank',
+  'SOUTHBANK':'South Indian Bank','J&KBANK':'Jammu & Kashmir Bank',
+  'CEATLTD':'CEAT Ltd','MRF':'MRF Ltd','APOLLOTYRE':'Apollo Tyres',
+  'EXIDEIND':'Exide Industries','AMARAJABAT':'Amara Raja Energy',
+  'TVSMOTOR':'TVS Motor Company','BAJAJHLDNG':'Bajaj Holdings',
+  'ESCORTS':'Escorts Kubota','M&M':'Mahindra & Mahindra',
+  'ASHOKLEY':'Ashok Leyland','TATAMTRDVR':'Tata Motors DVR',
+  'TIINDIA':'Tube Investments','SUNDARMFIN':'Sundaram Finance',
+  'SUNDRMFAST':'Sundram Fasteners','SCHAEFFLER':'Schaeffler India',
+  'SKFINDIA':'SKF India','TIMKEN':'Timken India','GRINDWELL':'Grindwell Norton',
+  'CARBORUNIV':'Carborundum Universal','CUMMINSIND':'Cummins India',
+  'THERMAX':'Thermax Ltd','BHEL':'Bharat Heavy Electricals',
+  'NLCINDIA':'NLC India','RVNL':'Rail Vikas Nigam',
+  'IRCON':'IRCON International','NBCC':'NBCC India','HUDCO':'HUDCO',
+  'RAILTEL':'RailTel Corporation','NMDC':'NMDC Ltd','MOIL':'MOIL Ltd',
+  'HINDCOPPER':'Hindustan Copper','NATIONALUM':'National Aluminium',
+  'SAIL':'Steel Authority of India','RATNAMANI':'Ratnamani Metals',
+  'JINDALSAW':'Jindal Saw','JSWINFRA':'JSW Infrastructure',
+  'ADANIENSOL':'Adani Energy Solutions','ADANITRANS':'Adani Transmission',
+  'CESC':'CESC Ltd','KPITTECH':'KPIT Technologies',
+  'LTTS':'L&T Technology Services','PERSISTENT':'Persistent Systems',
+  'COFORGE':'Coforge Ltd','MPHASIS':'Mphasis Ltd','HEXAWARE':'Hexaware Technologies',
+  'LTIM':'LTIMindtree','OFSS':'Oracle Financial Services',
+  'MASTEK':'Mastek Ltd','TATAELXSI':'Tata Elxsi','ZENSAR':'Zensar Technologies',
+  'NIIT':'NIIT Ltd','CYIENT':'Cyient Ltd','HAPPSTMNDS':'Happiest Minds',
+  'ROUTE':'Route Mobile','TANLA':'Tanla Platforms','ONMOBILE':'OnMobile Global',
+  'INDIAMART':'IndiaMART InterMESH','JUSTDIAL':'Just Dial',
+  'CARTRADE':'CarTrade Tech','EASEMYTRIP':'EaseMyTrip','IXIGO':'Le Travenues Tech',
+  'MAPMYINDIA':'CE Info Systems','AFFLE':'Affle India',
+  'NAZARA':'Nazara Technologies','RATEGAIN':'RateGain Travel Tech',
+  'NEWGEN':'Newgen Software','INTELLECT':'Intellect Design Arena',
+  'KFINTECH':'KFin Technologies','CAMS':'CAMS','BSE':'BSE Ltd',
+  'MCX':'Multi Commodity Exchange','CDSL':'Central Depository Services',
+  'ANGELONE':'Angel One','5PAISA':'5Paisa Capital',
+  'FIVESTAR':'Five-Star Business Finance',
+  'SBICARD':'SBI Cards','BAJAJFIN':'Bajaj Finance',
+  'SUNDARMFIN':'Sundaram Finance',
+  /* ── NIFTY SMALLCAP ── */
+  'CAMPUS':'Campus Activewear','BATAINDIA':'Bata India','VMART':'V-Mart Retail',
+  'SHOPERSTOP':'Shoppers Stop','TIPSINDLTD':'Tips Industries',
+  'PVRINOX':'PVR Inox','INOXGREEN':'INOX Green Energy',
+  'INOXWIND':'INOX Wind','SUZLON':'Suzlon Energy',
+  'WEBSOL':'Websol Energy System','WAAREEENER':'Waaree Energies',
+  'PREMIER':'Premier Energies',
+  'KSOLVES':'Ksolves India','AURIONPRO':'Aurionpro Solutions',
+  'LATENTVIEW':'Latent View Analytics','DATAMATICS':'Datamatics Global',
+  'BSOFT':'Birlasoft Ltd','SONATSOFTW':'Sonata Software',
+  'RAMSYS':'Ramco Systems','NUCLEUS':'Nucleus Software',
+  'FINCABLES':'Finolex Cables','KEI':'KEI Industries',
+  'HAVELLS':'Havells India','HBLPOWER':'HBL Power Systems',
+  'GMRINFRA':'GMR Airports Infrastructure','IRB':'IRB Infrastructure',
+  'SADBHAV':'Sadbhav Engineering','PNCINFRA':'PNC Infratech',
+  'HGINFRA':'HG Infra Engineering','KNR':'KNR Constructions',
+  'AHLUCONT':'Ahluwalia Contracts','NIACL':'New India Assurance',
+  'GICRE':'General Insurance Corp','STARHEALTH':'Star Health Insurance',
+  'GODIGIT':'Go Digit General Insurance',
+  'POLICYBZR':'PB Fintech','PAYTM':'One97 Communications',
+  'MOBIKWIK':'MobiKwik Systems',
+  'DOMS':'DOMS Industries','SIGNATUREG':'Signature Global',
+  'MAHSEAMLES':'Maharashtra Seamless','WELSPUNLIV':'Welspun Living',
+  'TRIDENT':'Trident Ltd','VARDHMAN':'Vardhman Textiles',
+  'PAGEIND':'Page Industries','KPRMILL':'KPR Mill',
+  'KITEX':'Kitex Garments','GOKEX':'Gokaldas Exports',
+  'RAYMOND':'Raymond Ltd','ARVIND':'Arvind Ltd',
+  'SPANDANA':'Spandana Sphoorty Financial',
+  'ARMANFIN':'Arman Financial Services',
+  'FUSION':'Fusion Micro Finance','UTKARSHBNK':'Utkarsh Small Finance Bank',
+  'JANA':'Jana Small Finance Bank',
+  'ELECON':'Elecon Engineering','GMMPFAUDLR':'GMM Pfaudler',
+  'ISGEC':'ISGEC Heavy Engineering','TEXRAIL':'Texmaco Rail & Engineering',
+  'ORIENTELEC':'Orient Electric','BAJAJELEC':'Bajaj Electricals',
+  'CROMPTON':'Crompton Greaves Consumer','VGUARD':'V-Guard Industries',
+  'DIXON':'Dixon Technologies',
+  'AMBER':'Amber Enterprises','VOLTAS':'Voltas Ltd',
+  'BLUESTARCO':'Blue Star Ltd','WHIRLPOOL':'Whirlpool of India',
+  'KAJARIACER':'Kajaria Ceramics','CERA':'Cera Sanitaryware',
+  'HINDWAREAP':'Hindware Home Innovation',
+  'SUPREMEIND':'Supreme Industries','NILKAMAL':'Nilkamal Ltd',
+  'UFLEX':'UFlex Ltd','HUHTAMAKI':'Huhtamaki India',
+  'MOLDTKPAC':'Mold-Tek Packaging',
+  'IPCALAB':'Ipca Laboratories','ALKEM':'Alkem Laboratories',
+  'AUROPHARMA':'Aurobindo Pharma','LUPIN':'Lupin Ltd',
+  'GLENMARK':'Glenmark Pharmaceuticals','TORNTPHARM':'Torrent Pharmaceuticals',
+  'ABBOTINDIA':'Abbott India','PFIZER':'Pfizer India',
+  'GLAXO':'GlaxoSmithKline Pharma','SANOFI':'Sanofi India',
+  'JBCHEPHARM':'JB Chemicals','CAPLIPOINT':'Caplin Point Laboratories',
+  'GRANULES':'Granules India','SUVEN':'Suven Pharmaceuticals',
+  'LAURUS':'Laurus Labs','DIVISLAB':'Divis Laboratories',
+  'BIOCON':'Biocon Ltd','STRIDES':'Strides Pharma',
+  'SEQUENT':'SeQuent Scientific','SOLARA':'Solara Active Pharma',
+  'NAVINFLUOR':'Navin Fluorine','SRF':'SRF Ltd',
+  'ATUL':'Atul Ltd','DEEPAKNTR':'Deepak Nitrite',
+  'ALKYLAMINE':'Alkyl Amines Chemicals','FINEORG':'Fine Organic Industries',
+  'GALAXYSURF':'Galaxy Surfactants','VINATI':'Vinati Organics',
+  'TATACHEM':'Tata Chemicals','GHCL':'GHCL Ltd',
+  'NOCIL':'NOCIL Ltd','PCBL':'PCBL Ltd',
+  'NEOGEN':'Neogen Chemicals',
+  /* ── Indices ── */
+  'NIFTY50':'^NSEI','BANKNIFTY':'^NSEBANK',
+};
+
+/* ── SYMBOL ALIASES ─────────────────────────────────────────────
+   Maps common names / old symbols / alternate tickers → correct NSE symbol
+   So user can type "Birlasoft" or "BIRLASOFT" and it resolves to BSOFT
+─────────────────────────────────────────────────────────────────── */
+const ALIASES = {
+  /* IT / Software */
+  'BIRLASOFT'   : 'BSOFT',
+  'BIRLA SOFT'  : 'BSOFT',
+  'MPHASIS LTD' : 'MPHASIS',
+  'NIIT LTD'    : 'NIIT',
+  'NIITMTS'     : 'NIIT',
+
+  /* Auto */
+  'BAJAJ AUTO'  : 'BAJAJ-AUTO',
+  'BAJAJ-AUTO'  : 'BAJAJ-AUTO',
+  'M AND M'     : 'M&M',
+  'MAHINDRA'    : 'M&M',
+
+  /* Finance */
+  'BAJAJ FIN'   : 'BAJFINANCE',
+  'BAJAJ FINANCE': 'BAJFINANCE',
+  '5PAISA'      : '5PAISA',
+
+  /* Pharma */
+  'DIVIS'       : 'DIVISLAB',
+  'DIVI'        : 'DIVISLAB',
+  'DIVI LAB'    : 'DIVISLAB',
+
+  /* Entertainment */
+  'PVR'         : 'PVRINOX',
+  'INOX'        : 'PVRINOX',
+
+  /* Power */
+  'ADANI ENT'   : 'ADANIENT',
+  'ADANI GREEN' : 'ADANIGREEN',
+  'ADANI PORTS' : 'ADANIPORTS',
+
+  /* Misc */
+  'ZOMATO LTD'  : 'ZOMATO',
+  'PAYTM'       : 'PAYTM',
+};
+
+/* Resolve alias → correct NSE symbol */
+function resolveSymbol(input){
+  var upper = input.toUpperCase().trim();
+  if(ALIASES[upper]) return ALIASES[upper];
+  if(STOCKS[upper])  return upper;
+  return upper; // return as-is, let worker try it
+}
+
+let acIdx = -1;
+let fetchTimer = null;
+let lastSymbol = '';
+let lastFetchedPrice = null;
+
+/* ── NSE Market Hours Check (IST) ── */
+function isNSEOpen(){
+  const now = new Date();
+  const ist = new Date(now.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  const day = ist.getDay();
+  if(day===0||day===6) return false;
+  const mins = ist.getHours()*60 + ist.getMinutes();
+  return mins >= 555 && mins <= 930; // 9:15 to 15:30
+}
+
+/* ── Autocomplete ── */
+/* Popular stocks to show when search field is focused but empty */
+const POPULAR = ['RELIANCE','TCS','HDFCBANK','INFY','ICICIBANK','SBIN','BHARTIARTL',
+  'WIPRO','AXISBANK','KOTAKBANK','MARUTI','TITAN','BAJFINANCE','HCLTECH','SUNPHARMA',
+  'TATAMOTORS','NTPC','ADANIENT','HAL','ZOMATO'];
+
+function onStockFocus(val){
+  if(PRICE_MODE==='manual') return;
+  val = (val||'').trim();
+  if(!val){
+    /* Show popular stocks when field is focused empty */
+    var matches = POPULAR.map(function(sym){ return [sym, STOCKS[sym]||sym]; });
+    showAC(matches, '');
+  }
+}
+
+function onStockInput(val){
+  if(PRICE_MODE==='manual') return;
+  val = val.toUpperCase().trim();
+  if(!val){
+    var matches = POPULAR.map(function(sym){ return [sym, STOCKS[sym]||sym]; });
+    showAC(matches, '');
+    clearStockUI();
+    return;
+  }
+  /* Search STOCKS dict — sym starts-with OR name contains */
+  var matches = Object.entries(STOCKS)
+    .filter(function([sym,name]){
+      return sym.startsWith(val) || name.toUpperCase().includes(val);
+    })
+    .slice(0, 10);
+
+  /* Also check aliases — if user types "BIRLASOFT", surface BSOFT entry */
+  if(ALIASES[val] && STOCKS[ALIASES[val]]){
+    var resolved = ALIASES[val];
+    var alreadyIn = matches.some(function([s]){ return s===resolved; });
+    if(!alreadyIn) matches.unshift([resolved, STOCKS[resolved]]);
+  }
+
+  showAC(matches.slice(0,10), val);
+}
+
+function onStockKey(e){
+  const drop = document.getElementById('acDrop');
+  const items = drop.querySelectorAll('.ac-item');
+  if(e.key==='ArrowDown'){e.preventDefault();acIdx=Math.min(acIdx+1,items.length-1);highlightAC(items);}
+  else if(e.key==='ArrowUp'){e.preventDefault();acIdx=Math.max(acIdx-1,-1);highlightAC(items);}
+  else if(e.key==='Enter'){
+    e.preventDefault();
+    if(acIdx>=0&&items[acIdx]){ items[acIdx].click(); }       /* highlighted item */
+    else if(items.length>0){ items[0].click(); }              /* first match */
+    else { closeAC(); }
+  }
+  else if(e.key==='Escape'){closeAC();}
+}
+
+function showAC(matches, q){
+  const drop = document.getElementById('acDrop');
+  acIdx = -1;
+  if(!matches.length){drop.innerHTML='';drop.classList.remove('open');return;}
+  drop.innerHTML = matches.map(([sym,name])=>`
+    <div class="ac-item" onclick="selectStock('${sym}','${name.replace(/'/g,'&#39;')}')">
+      <span class="ac-sym">${sym}</span>
+      <span class="ac-name">${name}</span>
+    </div>`).join('');
+  drop.classList.add('open');
+}
+
+function highlightAC(items){
+  items.forEach((el,i)=>el.style.background=i===acIdx?'var(--bg4)':'');
+}
+
+function closeAC(){
+  const drop=document.getElementById('acDrop');
+  drop.classList.remove('open');
+  acIdx=-1;
+}
+
+function clearStockUI(){
+  document.getElementById('stockPrice').textContent='—';
+  document.getElementById('stockPrice').className='stock-price';
+  document.getElementById('stockStatus').textContent='';
+  document.getElementById('stockStatus').className='stock-status';
+  document.getElementById('stockChange').textContent='';
+  document.getElementById('stockInfoStrip').classList.remove('visible');
+  document.getElementById('offlineTip').style.display='none';
+  document.getElementById('unlistedPanel').classList.remove('visible');
+  lastFetchedPrice=null; lastSymbol='';
+}
+
+function selectStock(sym, name){
+  var resolved = resolveSymbol(sym);  /* e.g. BIRLASOFT → BSOFT */
+  document.getElementById('stockInput').value = resolved;
+  closeAC();
+  setStockLoading(name);
+  fetchPrice(resolved);
+}
+
+function setStockLoading(name){
+  document.getElementById('stockPrice').textContent='...';
+  document.getElementById('stockPrice').className='stock-price loading';
+  document.getElementById('stockStatus').textContent='Fetching';
+  document.getElementById('stockStatus').className='stock-status loading';
+  document.getElementById('stockChange').textContent='';
+  document.getElementById('stockInfoStrip').classList.add('visible');
+  document.getElementById('siName').textContent=name||'';
+  document.getElementById('siExch').textContent='NSE';
+  document.getElementById('siPrev').textContent='';
+  document.getElementById('offlineTip').style.display='none';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRICE FETCH ENGINE v33.1
+   
+   Source chain (browser-safe, CORS-enabled, no auth needed):
+   
+   1. Groww Live API  — CORS-enabled, free, real NSE live data
+      groww.in/v1/api/stocks_data/.../overview
+      
+   2. mStock (Motilal Oswal) Quote API — CORS-enabled, free
+      api.mstock.trade/api/v2/market/quote
+      
+   3. allorigins.win → Yahoo Finance v8 chart — CORS proxy
+      Slower but good fallback
+      
+   4. corsproxy.io → Yahoo Finance v8 chart — second CORS proxy
+   
+   5. Your Cloudflare Worker (if WORKER_URL set) — reliable if alive
+   
+   NSEpy/nsetools are Python libraries — cannot run in browser.
+   Upstox requires OAuth2 — not suitable for a public HTML tool.
+═══════════════════════════════════════════════════════════════ */
+
+const WORKER_URL = 'https://wild-smoke-f48e.shristocks76.workers.dev';
+
+var _fetchSeq = 0;
+
+/* _getJSON: uses XMLHttpRequest instead of fetch()
+   fetch() fails in sandboxed iframes with "AbortSignal could not be cloned"
+   XHR works in all contexts — file://, iframes, embedded, everywhere */
+function _getJSON(url, timeoutMs){
+  return new Promise(function(resolve){
+    var ms = timeoutMs || 7000;
+    var done = false;
+    function finish(val){
+      if(done) return;
+      done = true;
+      resolve(val);
+    }
+    try{
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.timeout = ms;
+      xhr.responseType = 'json';
+      xhr.onload = function(){
+        if(xhr.status >= 200 && xhr.status < 300){
+          try{
+            var d = xhr.response;
+            if(typeof d === 'string') d = JSON.parse(d);
+            finish(d);
+          }catch(e){ console.warn('[STC] parse err:', url.substring(0,50)); finish(null); }
+        } else {
+          console.warn('[STC] not ok:', url.substring(0,50), xhr.status);
+          finish(null);
+        }
+      };
+      xhr.onerror   = function(){ console.warn('[STC] xhr error:', url.substring(0,50)); finish(null); };
+      xhr.ontimeout = function(){ console.warn('[STC] xhr timeout:', url.substring(0,50)); finish(null); };
+      xhr.onabort   = function(){ finish(null); };
+      xhr.send();
+    }catch(e){
+      console.warn('[STC] xhr init err:', url.substring(0,50), e.message);
+      finish(null);
+    }
+    /* Safety timeout */
+    setTimeout(function(){ finish(null); }, ms + 500);
+  });
+}
+
+/* ── Parser: Groww live overview API ── */
+function _parseGroww(d){
+  if(!d) return null;
+  // Shape: { ltp, close, ch, chp, name, exchange, ... }
+  try{
+    var price = +(d.ltp || d.price || d.lastPrice || 0);
+    if(price > 0){
+      return {
+        price    : price,
+        prevClose: +(d.close||d.previousClose||0)||null,
+        state    : (d.marketStatus==='OPEN' || d.isMarketOpen) ? 'REGULAR' : 'CLOSED',
+        name     : (d.companyName||d.name||null),
+        exchange : 'NSE'
+      };
+    }
+  }catch(e){}
+  return null;
+}
+
+/* ── Parser: Yahoo Finance v8 chart ── */
+function _parseYahooChart(d){
+  if(!d) return null;
+  try{
+    var meta  = d.chart.result[0].meta;
+    var price = +(meta.regularMarketPrice||0);
+    if(price > 0){
+      return {
+        price    : price,
+        prevClose: +(meta.chartPreviousClose||meta.previousClose||0)||null,
+        state    : (meta.marketState||''),
+        name     : (meta.shortName||meta.longName||null),
+        exchange : (meta.exchangeName||'NSE')
+      };
+    }
+  }catch(e){}
+  return null;
+}
+
+/* ── Parser: Yahoo Finance v7 quote ── */
+function _parseYahooQuote(d){
+  if(!d) return null;
+  try{
+    var q = d.quoteResponse.result[0];
+    var price = +(q.regularMarketPrice||0);
+    if(price > 0){
+      return {
+        price    : price,
+        prevClose: +(q.regularMarketPreviousClose||0)||null,
+        state    : (q.marketState||''),
+        name     : (q.shortName||q.longName||null),
+        exchange : (q.fullExchangeName||'NSE')
+      };
+    }
+  }catch(e){}
+  return null;
+}
+
+/* ── Parser: Worker / generic shape ── */
+function _parseWorker(d){
+  if(!d) return null;
+  var price = +(d.price||d.regularMarketPrice||d.ltp||0);
+  if(price > 0){
+    return {
+      price    : price,
+      prevClose: +(d.prevClose||d.previousClose||d.close||0)||null,
+      state    : (d.state||d.marketState||''),
+      name     : (d.name||d.companyName||d.longName||null),
+      exchange : (d.exchange||'NSE').replace('NSI','NSE').replace('BSI','BSE')
+    };
+  }
+  return _parseYahooChart(d); // also try chart shape
+}
+
+/* ── allorigins wrapper: returns {contents:"...json..."} ── */
+async function _viaAllorigins(url, parser){
+  var wrap = await _getJSON('https://api.allorigins.win/get?url='+encodeURIComponent(url), 8000);
+  if(!wrap||!wrap.contents) return null;
+  try{ return parser(JSON.parse(wrap.contents)); }catch(e){ return null; }
+}
+
+/* ── corsproxy.io wrapper ── */
+async function _viaCorsProxy(url, parser){
+  var d = await _getJSON('https://corsproxy.io/?'+encodeURIComponent(url), 8000);
+  return parser ? parser(d) : null;
+}
+
+async function fetchPrice(sym){
+  lastSymbol = sym;
+  var seq = ++_fetchSeq;
+
+  var tickerNS = sym+'.NS';
+  var tickerBO = sym+'.BO';
+
+  /* Yahoo URLs */
+  var yhChart  = 'https://query1.finance.yahoo.com/v8/finance/chart/'+tickerNS+'?interval=1d&range=2d';
+  var yhChartBO= 'https://query1.finance.yahoo.com/v8/finance/chart/'+tickerBO+'?interval=1d&range=2d';
+  var yhQuote  = 'https://query2.finance.yahoo.com/v7/finance/quote?symbols='+tickerNS;
+
+  /* ── SOURCE 1: Cloudflare Worker — try .NS then .BO ── */
+  if(WORKER_URL){
+    var wUrl1 = WORKER_URL+'/price/'+tickerNS;
+    console.log('[STC] Worker try 1:', wUrl1);
+    var d1 = await _getJSON(wUrl1, 7000);
+    if(seq!==_fetchSeq) return;
+    console.log('[STC] Worker response 1:', d1);
+
+    if(!d1 || !d1.price){
+      var wUrl2 = WORKER_URL+'/price/'+sym;
+      console.log('[STC] Worker try 2:', wUrl2);
+      d1 = await _getJSON(wUrl2, 5000);
+      if(seq!==_fetchSeq) return;
+      console.log('[STC] Worker response 2:', d1);
+    }
+
+    if(!d1 || !d1.price){
+      /* Try BSE ticker as last worker attempt */
+      var wUrl3 = WORKER_URL+'/price/'+tickerBO;
+      console.log('[STC] Worker try 3 (BSE):', wUrl3);
+      d1 = await _getJSON(wUrl3, 5000);
+      if(seq!==_fetchSeq) return;
+      console.log('[STC] Worker response 3:', d1);
+    }
+
+    if(d1){ var p1=_parseWorker(d1); if(p1&&p1.price>0){ _applyPriceToUI(sym,p1); return; } }
+  }
+
+  /* ── SOURCE 2: Groww Live API (CORS-enabled, NSE live data) ── */
+  try{
+    var growwUrl = 'https://groww.in/v1/api/stocks_data/v1/tr_live_data/exchange/NSE/segment/CASH/'+sym+'/overview';
+    var g = await _getJSON(growwUrl, 6000);
+    if(seq!==_fetchSeq) return;
+    var pg = _parseGroww(g);
+    if(pg && pg.price>0){ _applyPriceToUI(sym, pg); return; }
+  }catch(e){}
+
+  /* ── SOURCE 3: allorigins → Yahoo v8 chart (.NS) ── */
+  var p3 = await _viaAllorigins(yhChart, _parseYahooChart);
+  if(seq!==_fetchSeq) return;
+  if(p3 && p3.price>0){ _applyPriceToUI(sym, p3); return; }
+
+  /* ── SOURCE 4: allorigins → Yahoo v7 quote ── */
+  var p4 = await _viaAllorigins(yhQuote, _parseYahooQuote);
+  if(seq!==_fetchSeq) return;
+  if(p4 && p4.price>0){ _applyPriceToUI(sym, p4); return; }
+
+  /* ── SOURCE 5: corsproxy.io → Yahoo v8 chart (.NS) ── */
+  var p5 = await _viaCorsProxy(yhChart, _parseYahooChart);
+  if(seq!==_fetchSeq) return;
+  if(p5 && p5.price>0){ _applyPriceToUI(sym, p5); return; }
+
+  /* ── SOURCE 6: allorigins → Yahoo v8 chart (.BO BSE fallback) ── */
+  var p6 = await _viaAllorigins(yhChartBO, _parseYahooChart);
+  if(seq!==_fetchSeq) return;
+  if(p6 && p6.price>0){ _applyPriceToUI(sym, p6); return; }
+
+  /* ── All sources failed ── */
+  if(seq!==_fetchSeq) return;
+  setDataSource('error');
+  document.getElementById('stockPrice').textContent  = '⚠ No price';
+  document.getElementById('stockPrice').className    = 'stock-price error';
+  document.getElementById('stockStatus').textContent = 'All sources failed';
+  document.getElementById('stockStatus').className   = 'stock-status closed';
+  document.getElementById('stockChange').textContent = '';
+  document.getElementById('siName').textContent      = STOCKS[sym]||sym;
+  document.getElementById('siExch').textContent      = 'NSE/BSE';
+  document.getElementById('siPrev').textContent      = 'Enter CMP manually below';
+  document.getElementById('stockInfoStrip').classList.add('visible');
+  document.getElementById('offlineTip').style.display = 'block';
+  document.getElementById('unlistedPanel').classList.remove('visible');
+  lastFetchedPrice = null;
+  setTimeout(function(){
+    if(!lastFetchedPrice){ setPriceMode('manual'); showToast('Price unavailable — switched to Manual mode'); }
+  }, 600);
+}
+
+function _applyPriceToUI(sym, p){
+  var isLive = (p.state==='REGULAR');
+  var change = p.prevClose ? (p.price - p.prevClose) : 0;
+  var pct    = p.prevClose ? (change/p.prevClose*100) : 0;
+  var sign   = change >= 0 ? '+' : '';
+  lastFetchedPrice = p.price;
+
+  document.getElementById('stockPrice').textContent  = '₹'+p.price.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('stockPrice').className    = 'stock-price '+(isLive?'live':'closed');
+  document.getElementById('stockStatus').textContent = isLive ? '● LIVE' : '◌ Last close';
+  document.getElementById('stockStatus').className   = 'stock-status '+(isLive?'live':'closed');
+  document.getElementById('stockChange').textContent = p.prevClose ? sign+pct.toFixed(2)+'% ('+sign+change.toFixed(2)+')' : '';
+  document.getElementById('stockChange').className   = 'stock-change '+(change>0?'up':change<0?'down':'flat');
+  document.getElementById('siName').textContent      = p.name||STOCKS[sym]||sym;
+  document.getElementById('siExch').textContent      = (p.exchange||'NSE')+' · '+sym;
+  document.getElementById('siPrev').textContent      = p.prevClose
+    ? 'Prev close: ₹'+p.prevClose.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})
+    : '';
+  document.getElementById('stockInfoStrip').classList.add('visible');
+  document.getElementById('offlineTip').style.display = 'none';
+  document.getElementById('unlistedPanel').classList.remove('visible');
+  /* Fill CMP and keep editable */
+  document.getElementById('cmp').value = p.price.toFixed(2);
+  /* Pre-fill ATR prev close from fetch */
+  if(p.prevClose && !document.getElementById('atrPrevClose').value){
+    document.getElementById('atrPrevClose').value = p.prevClose.toFixed(2);
+  }
+  /* Data source badge */
+  setDataSource(isLive ? 'live' : 'cached');
+  /* If capital is blank, pulse it and focus */
+  var capField = document.getElementById('cap');
+  if(!capField.value){
+    capField.style.boxShadow = '0 0 0 2px var(--amber)';
+    capField.focus();
+    setTimeout(function(){ capField.style.boxShadow=''; }, 2000);
+  }
+  updateStepState();
+  go();
+}
+
+/* auto-refresh live price every 30s if market open */
+setInterval(function(){
+  if(lastSymbol && isNSEOpen() && lastFetchedPrice) fetchPrice(lastSymbol);
+}, 30000);
+
+
+/* ═══════════════════════════════════════════════════
+   TRADE JOURNAL — v33
+   Saves trade snapshots to localStorage.
+   Max 50 entries, newest first.
+═══════════════════════════════════════════════════ */
+const LS_JOURNAL = 'stc_v33_journal';
+
+function getJournal(){
+  try{ return JSON.parse(localStorage.getItem(LS_JOURNAL)||'[]'); }catch(e){ return []; }
+}
+function setJournal(arr){
+  try{ localStorage.setItem(LS_JOURNAL, JSON.stringify(arr)); }catch(e){}
+}
+
+function saveTrade(){
+  var{cap,cmp,entry,slPct,capRisk,fixedRisk,maxShares,maxAlloc,rewPct,lotSize}=gv();
+  var d=calc(cap,cmp,slPct,capRisk,rewPct,{entry:entry,fixedRisk:fixedRisk,maxShares:maxShares,maxAlloc:maxAlloc});
+  if(!d){ showToast('Complete the trade plan first'); return; }
+
+  var stockSym  = PRICE_MODE==='manual'
+    ? (document.getElementById('customName').value||'CUSTOM').trim().toUpperCase()
+    : (document.getElementById('stockInput').value||'—').toUpperCase();
+  var stockName = PRICE_MODE==='manual'
+    ? (document.getElementById('customName').value||'Custom Stock')
+    : (document.getElementById('siName').textContent||stockSym);
+
+  var entry_obj = {
+    id       : Date.now(),
+    date     : new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+    time     : new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
+    sym      : stockSym,
+    name     : stockName,
+    mode     : TRADE_MODE,
+    entryType: ENTRY_TYPE,
+    cmp      : cmp,
+    entry    : entry,
+    sl       : d.sl,
+    target   : d.target,
+    slPct    : slPct,
+    rewPct   : rewPct,
+    qty      : d.qty,
+    deployed : d.deployed,
+    actLoss  : d.actLoss,
+    actProfit: d.actProfit,
+    netRR    : d.netRR,
+    capRisk  : SIZING_MODE==='fixed' ? null : capRisk,
+    fixedRisk: SIZING_MODE==='fixed' ? fixedRisk : null,
+    sizingMode: SIZING_MODE,
+  };
+
+  var journal = getJournal();
+  journal.unshift(entry_obj);
+  if(journal.length > 50) journal = journal.slice(0,50);
+  setJournal(journal);
+  renderJournal();
+  showToast('Trade saved to journal ✓');
+}
+
+function deleteJournalEntry(id){
+  var journal = getJournal().filter(function(e){ return e.id !== id; });
+  setJournal(journal);
+  renderJournal();
+}
+
+function clearJournal(){
+  if(!confirm('Clear all saved trades?')) return;
+  setJournal([]);
+  renderJournal();
+}
+
+function loadJournalEntry(id){
+  var e = getJournal().find(function(x){ return x.id===id; });
+  if(!e) return;
+  document.getElementById('cmp').value    = e.cmp;
+  document.getElementById('slpct').value  = e.slPct;
+  document.getElementById('rewpct').value = e.rewPct;
+  if(e.capRisk)   document.getElementById('caprisk').value  = e.capRisk;
+  if(e.fixedRisk) document.getElementById('fixedRisk').value= e.fixedRisk;
+  if(e.entryType) setEntryType(e.entryType);
+  if(e.entry && e.entry !== e.cmp) document.getElementById('entryPrice').value = e.entry;
+  if(e.sizingMode) setSizingMode(e.sizingMode);
+  setMode(e.mode||'delivery');
+  // Restore stock display
+  document.getElementById('siName').textContent = e.name;
+  document.getElementById('siExch').textContent = e.sym;
+  document.getElementById('stockInput').value   = e.sym;
+  document.getElementById('stockInfoStrip').classList.add('visible');
+  go(); saveInputs();
+  showToast('Trade loaded ✓');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderJournal(){
+  var journal = getJournal();
+  var list    = document.getElementById('journalList');
+  var clearBtn= document.getElementById('clearJournalBtn');
+  if(!list) return;
+
+  if(!journal.length){
+    list.innerHTML='<div class="res-placeholder"><p style="color:var(--faint)">No saved trades yet · fill a trade plan above and click "Save to Journal"</p></div>';
+    if(clearBtn) clearBtn.style.display='none';
+    return;
+  }
+  if(clearBtn) clearBtn.style.display='';
+
+  list.innerHTML = journal.map(function(e){
+    var rrNum  = parseFloat(e.netRR);
+    var rrCol  = rrNum>=2?'green':rrNum>=1.5?'amber':'red';
+    var modeTag= e.mode==='delivery'
+      ? '<span class="jc-mode delivery">Delivery</span>'
+      : '<span class="jc-mode intraday">Intraday</span>';
+    var etTag  = e.entryType && e.entryType!=='market'
+      ? ' · <span style="font-family:DM Mono,monospace;font-size:9px;color:var(--sky)">'+e.entryType.toUpperCase()+'</span>' : '';
+    return `<div class="journal-card">
+      <div class="jc-head">
+        <span class="jc-sym">${e.sym}</span>
+        <span class="jc-name">${e.name}</span>
+        ${modeTag}${etTag}
+        <span class="jc-date">${e.date} ${e.time}</span>
+        <button class="jc-del" onclick="deleteJournalEntry(${e.id})" title="Delete">✕</button>
+      </div>
+      <div class="jc-body">
+        <div class="jc-cell"><div class="jc-lbl">CMP / Entry</div><div class="jc-val amber">₹${e.entry.toLocaleString('en-IN')}</div></div>
+        <div class="jc-cell"><div class="jc-lbl">Stop Loss</div><div class="jc-val red">₹${e.sl.toLocaleString('en-IN')} <span style="font-size:10px;opacity:0.7">−${e.slPct}%</span></div></div>
+        <div class="jc-cell"><div class="jc-lbl">Target</div><div class="jc-val green">₹${e.target.toLocaleString('en-IN')} <span style="font-size:10px;opacity:0.7">+${e.rewPct}%</span></div></div>
+        <div class="jc-cell"><div class="jc-lbl">Qty</div><div class="jc-val cyan">${e.qty.toLocaleString('en-IN')} shares</div></div>
+        <div class="jc-cell"><div class="jc-lbl">Max Loss</div><div class="jc-val red">−₹${e.actLoss.toLocaleString('en-IN')}</div></div>
+        <div class="jc-cell"><div class="jc-lbl">Net Profit</div><div class="jc-val green">+₹${e.actProfit.toLocaleString('en-IN')}</div></div>
+        <div class="jc-cell"><div class="jc-lbl">Deployed</div><div class="jc-val">₹${e.deployed.toLocaleString('en-IN')}</div></div>
+        <div class="jc-cell"><div class="jc-lbl">Net R:R</div><div class="jc-val ${rrCol}">1 : ${parseFloat(e.netRR).toFixed(1)}</div></div>
+        <div class="jc-cell"><div class="jc-lbl">Risk</div><div class="jc-val">${e.sizingMode==='fixed'?'₹'+e.fixedRisk.toLocaleString('en-IN'):e.capRisk+'% capital'}</div></div>
+      </div>
+      <button class="jc-load-btn" onclick="loadJournalEntry(${e.id})">↺ Load this trade</button>
+    </div>`;
+  }).join('');
+}
+
+loadInputs();
+updateStepState();
+go();
+updateModeIndicator();
+// Init UI states for new features (in case loadInputs didn't fire them)
+if(PRICE_MODE==='manual') setPriceMode('manual');
+loadRecentCustom();
+renderJournal();
+
+/* ── FILE:// ORIGIN WARNING ── */
+(function(){
+  if(window.location.protocol === 'file:'){
+    var bar = document.createElement('div');
+    bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1a0a00;border-top:2px solid #ffd060;padding:10px 16px;display:flex;align-items:center;gap:12px;font-family:DM Mono,monospace;font-size:11px;color:#ffd060;';
+    bar.innerHTML = '<span style="font-size:16px">⚠</span>'
+      + '<span style="flex:1"><strong>Price auto-fetch disabled</strong> — file opened locally (file://). '
+      + 'To enable live prices: right-click the HTML file → <strong>Open with Live Server</strong> (VS Code) '
+      + 'or run <code style="background:rgba(255,208,96,0.15);padding:1px 5px;border-radius:3px">python -m http.server</code> in the same folder and open <strong>http://localhost:8000</strong></span>'
+      + '<span style="cursor:pointer;font-size:18px;opacity:0.6" onclick="this.parentElement.remove()">×</span>';
+    document.body.appendChild(bar);
+    console.warn('[STC] Opened as file:// — CORS will block all price APIs. Serve via HTTP for live prices.');
+  }
+})();
+</script>
+</body>
+</html>
